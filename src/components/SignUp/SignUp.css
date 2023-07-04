@@ -1,0 +1,19 @@
+.buttonSignup{
+    float: right;
+}
+.signBg{
+    padding: 80px;
+    margin: auto;
+    margin-top: 80px;
+}
+.signHeading{
+    color:#d3ac5e;
+    text-shadow: 2px 2px;
+}
+.signMain{
+    background-color:#e5e6e8;
+    height: 100vh;
+    background-size: 100% auto;
+    background-attachment: fixed;
+    
+}
