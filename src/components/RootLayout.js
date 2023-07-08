@@ -1,14 +1,22 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
 import Navbar from './navbar/Navbar'
 import Footer from './footer/Footer'
+import Home from './Home/Home'
+import { Route, Routes } from 'react-router-dom';
+import Login from './Login/Login'
+import SignUp from './SignUp/SignUp'
+
 
 function RootLayout() {
   return (
     <div>
-        <Navbar/>
-        <Outlet/>
-        <Footer/>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+      <Footer />
     </div>
   )
 }
