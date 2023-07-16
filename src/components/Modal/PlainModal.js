@@ -10,7 +10,7 @@ function PlainModal(props) {
                 <Modal.Title>Modal Title</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>Modal body text goes here.</p>
+                {props.body}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={()=>props.onClose()}>
