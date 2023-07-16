@@ -1,10 +1,35 @@
 import './Login.css'
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { login, loginRequest, loginSuccess, loginFailure } from '../../redux/actions/authActions';
+
+
 function Login() {
+    const dispatch = useDispatch();
+    const isLoading = useSelector((state) => state.auth.isLoading);
+    const isLogin=useSelector((state)=>state.auth.isLogin)
+    const users=useSelector((state)=>state.users)
+    console.log("Users is ",isLogin)
+    const error = useSelector((state) => state.auth.error);
+    const [credentials, setCredentials] = useState({
+        email: '',
+        password: '',
+    });
     let navigate = useNavigate();
-    let home = () => {
-        navigate('/')
-    }
+
+    const handleInputChange = (event) => {
+        event.preventDefault();
+        setCredentials({
+            ...credentials,
+            [event.target.name]: event.target.value,
+        });
+    };
+
+    const handleLogin = (event) => {
+        event.preventDefault();
+        dispatch(login(credentials));
+      };
     return (
         <div className='container-fluid main'>
             <div className='basic border  border-0 rounded'>
@@ -13,25 +38,26 @@ function Login() {
                 </div>
                 <div className="right">
                     <h1 className='display-1 lh-lg fw-semibold'>Login</h1>
-                    <form action="">
+                    <form action="" onSubmit={handleLogin}>
                         <div className='input-group mt-3'>
-                            <span htmlFor="username" className='input-group-text '>Username</span>
-                            <input type="text" className='form-control' name="username" id="username " />
+                            <span htmlFor="email" className='input-group-text '>Username</span>
+                            <input onChange={handleInputChange} type="text" className='form-control' name="email" id="email " />
                         </div>
                         <div className='input-group mt-3'>
                             <span htmlFor="password" className='input-group-text '>Password</span>
-                            <input type="password" name="password" id="password" className='form-control' />
+                            <input onChange={handleInputChange} type="password" name="password" id="password" className='form-control' />
                         </div>
-                        <button onClick={home} className=' buttonLogin btn btn-success mt-3'>Login</button>
+                        <button  type="submit" className=' buttonLogin btn btn-success mt-3'>{isLogin?"Logout":"Login"}</button>
                     </form>
                     <h6 className='mt-5 ms-5'>Didn't have an account ?</h6>
-                    <h6><div onClick={() => { navigate('/signup') }} className='text-decoration-none' style={{
-                        color: "#d3ac5e",
-                        fontWeight: "bold",
-                        fontSize: "20px",
-                        cursor:"pointer"
-                    }
-                    } >Sign Up</div></h6>
+                    <h6><div onClick={() => { navigate('/signup'); }}
+                        className='text-decoration-none' style={{
+                            color: "#d3ac5e",
+                            fontWeight: "bold",
+                            fontSize: "20px",
+                            cursor: "pointer"
+                        }
+                        } >Sign Up</div></h6>
 
                 </div>
             </div>
