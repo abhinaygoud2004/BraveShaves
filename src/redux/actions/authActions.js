@@ -1,52 +1,38 @@
 import axios from 'axios';
-const apiKey = process.env.REACT_APP_API_KEY;
-const baseUrl = process.env.REACT_APP_BASE_URL;
-
-
-// Action types
-export const LOGIN_REQUEST = 'LOGIN_REQUEST';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
-
-export const SIGNUP_REQUEST = 'SIGNUP_REQUEST';
-export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
-export const SIGNUP_FAILURE = 'SIGNUP_FAILURE';
-
-export const SET_IS_LOGIN = 'SET_IS_LOGIN';
-
+import {AuthTypes} from '../types'
 
 // Action creators
 export const setIsLogin = (isLogin) => ({
-  type: SET_IS_LOGIN,
+  type: AuthTypes.ACTION.SET_IS_LOGIN,
   payload: isLogin,
 });
 
 
 export const loginRequest = () => ({
-  type: LOGIN_REQUEST,
+  type: AuthTypes.ACTION.LOGIN_REQUEST,
 });
 
 export const loginSuccess = (user) => ({
-  type: LOGIN_SUCCESS,
+  type: AuthTypes.ACTION.LOGIN_SUCCESS,
   payload: user,
 });
 
 export const loginFailure = (error) => ({
-  type: LOGIN_FAILURE,
+  type: AuthTypes.ACTION.LOGIN_FAILURE,
   payload: error,
 });
 
 export const signupRequest = () => ({
-  type: SIGNUP_REQUEST,
+  type: AuthTypes.ACTION.SIGNUP_REQUEST,
 });
 
 export const signupSuccess = (user) => ({
-  type: SIGNUP_SUCCESS,
+  type: AuthTypes.ACTION.SIGNUP_SUCCESS,
   payload: user,
 });
 
 export const signupFailure = (error) => ({
-  type: SIGNUP_FAILURE,
+  type: AuthTypes.ACTION.SIGNUP_FAILURE,
   payload: error,
 });
 
@@ -56,13 +42,15 @@ export const login = (credentials) => {
     dispatch(loginRequest());
 
     try {
-      const response = await axios.post('http://localhost:4000/users', credentials);
+      const response = await axios.post('http://localhost:4000/user-api/login', credentials);
       const user = response.data;
-      dispatch(loginSuccess(user));
-      dispatch(setIsLogin(true))
+      if(response.data.message==="success"){
+        dispatch(setIsLogin(true))
+        dispatch(loginSuccess(user));
+        localStorage.setItem("token",response.data.token)
+      }
     } catch (error) {
       dispatch(loginFailure(error.message));
-      console.log(error)
     }
   };
 };
@@ -72,9 +60,12 @@ export const signup = (userData) => {
     dispatch(signupRequest());
 
     try {
-      const response = await axios.post('/api/signup', userData);
-      const user = response.data;
-      dispatch(signupSuccess(user));
+      const response = await axios.post('http://localhost:4000/user-api/register', userData,{
+        headers: {
+          'Content-Type': 'application/json', // Set the content type to JSON
+        },});
+      // dispatch(signupSuccess(userData));
+     
     } catch (error) {
       dispatch(signupFailure(error.message));
     }

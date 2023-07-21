@@ -1,31 +1,23 @@
-import {
-  LOGIN_REQUEST,
-  LOGIN_SUCCESS,
-  LOGIN_FAILURE,
-  SIGNUP_REQUEST,
-  SIGNUP_SUCCESS,
-  SIGNUP_FAILURE,
-  SET_IS_LOGIN,
-} from '../actions/authActions';
+import { AuthTypes } from "../types";
 
 const initialState = {
   user: null,
-  isLogin: false, // New property for tracking login status
+  isLogin: false, 
   isLoading: false,
   error: null,
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
-    case LOGIN_REQUEST:
-    case SIGNUP_REQUEST:
+    case AuthTypes.ACTION.LOGIN_REQUEST:
+    case AuthTypes.ACTION.SIGNUP_REQUEST:
       return {
         ...state,
         isLoading: true,
         error: null,
       };
-    case LOGIN_SUCCESS:
-    case SIGNUP_SUCCESS:
+    case AuthTypes.ACTION.LOGIN_SUCCESS:
+    case AuthTypes.ACTION.SIGNUP_SUCCESS:
       return {
         ...state,
         isLoading: false,
@@ -33,14 +25,14 @@ const authReducer = (state = initialState, action) => {
         isLogin: true, // Update isLogin to true upon successful login
         error: null,
       };
-    case LOGIN_FAILURE:
-    case SIGNUP_FAILURE:
+    case AuthTypes.ACTION.LOGIN_FAILURE:
+    case AuthTypes.ACTION.SIGNUP_FAILURE:
       return {
         ...state,
         isLoading: false,
         error: action.payload,
       };
-      case SET_IS_LOGIN:
+      case AuthTypes.ACTION.SET_IS_LOGIN:
       return {
         ...state,
         isLogin: action.payload,

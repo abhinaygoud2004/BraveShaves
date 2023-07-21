@@ -1,5 +1,5 @@
 import './Login.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { login, loginRequest, loginSuccess, loginFailure } from '../../redux/actions/authActions';
@@ -7,17 +7,16 @@ import { login, loginRequest, loginSuccess, loginFailure } from '../../redux/act
 
 function Login() {
     const dispatch = useDispatch();
-    const isLoading = useSelector((state) => state.auth.isLoading);
     const isLogin=useSelector((state)=>state.auth.isLogin)
-    const users=useSelector((state)=>state.users)
-    console.log("Users is ",isLogin)
-    const error = useSelector((state) => state.auth.error);
     const [credentials, setCredentials] = useState({
-        email: '',
+        username: '',
         password: '',
     });
     let navigate = useNavigate();
-
+    useEffect(()=>{
+        if(isLogin)
+            navigate('/home')
+    },[isLogin])
     const handleInputChange = (event) => {
         event.preventDefault();
         setCredentials({
@@ -40,14 +39,14 @@ function Login() {
                     <h1 className='display-1 lh-lg fw-semibold'>Login</h1>
                     <form action="" onSubmit={handleLogin}>
                         <div className='input-group mt-3'>
-                            <span htmlFor="email" className='input-group-text '>Username</span>
-                            <input onChange={handleInputChange} type="text" className='form-control' name="email" id="email " />
+                            <span htmlFor="username" className='input-group-text '>Username</span>
+                            <input onChange={handleInputChange} type="text" className='form-control' name="username" id="username " />
                         </div>
                         <div className='input-group mt-3'>
                             <span htmlFor="password" className='input-group-text '>Password</span>
                             <input onChange={handleInputChange} type="password" name="password" id="password" className='form-control' />
                         </div>
-                        <button  type="submit" className=' buttonLogin btn btn-success mt-3'>{isLogin?"Logout":"Login"}</button>
+                        <button  type="submit"  className=' buttonLogin btn btn-success mt-3'>Login</button>
                     </form>
                     <h6 className='mt-5 ms-5'>Didn't have an account ?</h6>
                     <h6><div onClick={() => { navigate('/signup'); }}

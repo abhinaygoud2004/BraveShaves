@@ -21,7 +21,6 @@ function DateTimePicker(props) {
 
     return currentDate.getTime() < startDate.getTime();
   };
-    console.log("selected date is ",startDate)
 
   return (
       <DatePicker

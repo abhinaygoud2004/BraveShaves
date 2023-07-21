@@ -1,8 +1,12 @@
 import React from 'react'
 import './Navbar.css'
 import { NavLink } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { login, loginRequest, loginSuccess, loginFailure, setIsLogin } from '../../redux/actions/authActions';
+
 
 function Navbar() {
+  const isLogin=useSelector((state)=>state.auth.isLogin)
   let activeLink={
     color:"#beafb5",
     fontSize:"20px",
@@ -13,6 +17,7 @@ function Navbar() {
     fontSize:"18px",
     fontWeight:"semi-bold"
   }
+  const dispatch=useDispatch()
   return (
     <div>
         <nav className="navbar navbar-expand-lg ">
@@ -31,11 +36,24 @@ function Navbar() {
           }
           } aria-current="page" to="/">Home</NavLink>
         </li>
-        <li className="nav-item">
+        {
+          !isLogin?
+          <li className="nav-item">
           <NavLink className="nav-link" style={({isActive})=>{
            return isActive?activeLink:inActiveLink
           }} to="/login">Login</NavLink>
-        </li>
+        </li>:
+         <li className="nav-item">
+         <NavLink className="nav-link" style={({isActive})=>{
+          return isActive?activeLink:inActiveLink
+         }} to="/home" onClick={()=>{
+          localStorage.clear();
+          dispatch(setIsLogin(false))
+         }}>Logout</NavLink>
+       </li>
+        }
+       
+
         <li className="nav-item">
           <NavLink className="nav-link" style={({isActive})=>{
            return isActive?activeLink:inActiveLink

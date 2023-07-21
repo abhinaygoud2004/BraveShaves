@@ -2,24 +2,17 @@ import './SignUp.css'
 import axios from 'axios'
 import { useState } from 'react'
 import {useForm} from 'react-hook-form'
+import { login, loginRequest, loginSuccess, loginFailure, signup } from '../../redux/actions/authActions';
+import { useDispatch,useSelector } from 'react-redux';
 function SignUp() {
     let {register,handleSubmit,formState:{errors}}=useForm()
+    const dispatch=useDispatch();
+    const users=useSelector((state)=>state.users)
     //HTTP req error state
     let [err,setErr]=useState("")
     let addUser=(newUser)=>{
-        axios.post("http://localhost:4000/users",newUser)
-        .then((response)=>{
-            if(response.status===201)
-            setErr("")
-        })
-        .catch((err)=>{
-            if(err.response)
-            setErr(err.message)
-            else if(err.request)
-            setErr(err.message)
-            else
-            setErr(err.message)
-        })
+        let usr=newUser;
+        dispatch(signup(usr))
     }
   return (
     <div className='container-fluid signMain pb-5'>
