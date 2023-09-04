@@ -15,7 +15,7 @@ function Login() {
     let navigate = useNavigate();
     useEffect(()=>{
         if(isLogin)
-            navigate('/home')
+            navigate('/')
     },[isLogin])
     const handleInputChange = (event) => {
         event.preventDefault();

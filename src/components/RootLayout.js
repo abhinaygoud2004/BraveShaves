@@ -5,6 +5,7 @@ import Home from './Home/Home'
 import { Route, Routes } from 'react-router-dom';
 import Login from './Login/Login'
 import SignUp from './SignUp/SignUp'
+import MyProfile from './myprofile/MyProfile';
 
 
 function RootLayout() {
@@ -12,9 +13,10 @@ function RootLayout() {
     <div>
       <Navbar />
       <Routes>
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/myprofile" element={<MyProfile/>}/>
       </Routes>
       <Footer />
     </div>

@@ -49,7 +49,6 @@ function Shops() {
               <div className="card">
                 <div className="card-body">
                  {item.value}
-                 
                   <button className='btn btn-success' onClick={handleOpenModal}  style={{ float: "right" }}>Book Slot</button>
                 </div>
               </div>

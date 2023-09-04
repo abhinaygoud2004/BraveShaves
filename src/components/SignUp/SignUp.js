@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {useForm} from 'react-hook-form'
 import { login, loginRequest, loginSuccess, loginFailure, signup } from '../../redux/actions/authActions';
 import { useDispatch,useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 function SignUp() {
     let {register,handleSubmit,formState:{errors}}=useForm()
     const dispatch=useDispatch();
@@ -14,6 +15,7 @@ function SignUp() {
         let usr=newUser;
         dispatch(signup(usr))
     }
+    let navigate=useNavigate()
   return (
     <div className='container-fluid signMain pb-5'>
         {/*HTTP err message */}
@@ -45,7 +47,7 @@ function SignUp() {
                 {errors.repassword?.type&&<p className='text-danger'>*Password is required</p>}
             </div>
 
-            <button type='submit' className='buttonSignup mt-3 btn btn-success'>Sign Up</button>
+            <button type='submit' onClick={navigate('/login')} className='buttonSignup mt-3 btn btn-success'>Sign Up</button>
         </form>
     </div>
   )
