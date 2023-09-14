@@ -1,5 +1,5 @@
-import carousel1 from '../../images/carousel/carousel1.jpeg'
-import carousel2 from '../../images/carousel/carousel2.jpeg'
+import carousel1 from '../../images/carousel/carousel1.jpg'
+import carousel2 from '../../images/carousel/carousel2.jpg'
 import carousel3 from '../../images/carousel/carousel3.jpg'
 import './Home.css'
 import React from 'react'
@@ -9,7 +9,7 @@ function Home() {
   
   return (
     <div className=" mt-5">
-      <div id="carouselExampleDark" className="carousel carousel-fade  slide w-75 m-auto" data-bs-ride="carousel">
+      <div id="carouselExampleDark" className="carousel carousel-fade  slide w-100 m-auto" data-bs-ride="carousel">
         <div className="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
           <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
