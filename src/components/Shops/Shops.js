@@ -1,74 +1,117 @@
-import React from 'react'
-import PlainModal from '../Modal/PlainModal'
-import BarberShopDetail from '../BarberShopDetail/BarberShopDetail'
-import { useState } from 'react'
+import React, { useState } from 'react';
+import PlainModal from '../Modal/PlainModal';
+import BarberShopDetail from '../BarberShopDetail/BarberShopDetail';
+import {FaAngleUp} from 'react-icons/fa'
+import {FaAngleDown} from 'react-icons/fa'
+import { NavLink } from 'react-router-dom';
+import { FaStar, FaStarHalfAlt,FaRegStar } from 'react-icons/fa';
+
+let generateStarRating=(rating)=>{
+  const maxRating = 5;
+  const starRating = [];
+  const roundedRating = Math.round(rating * 2) / 2; // Round to the nearest half star
+
+  for (let i = 1; i <= maxRating; i++) {
+    if (i <= roundedRating) {
+      starRating.push(<FaStar  key={i} />);
+    } else if (i === roundedRating + 0.5) {
+      starRating.push(<FaStarHalfAlt  key={i} />);
+    } else {
+      starRating.push(<FaRegStar  key={i}  />);
+    }
+  }
+
+  return starRating;
+}
+
+
 
 function Shops() {
-
   const [selectedBarberShop, setSelectedBarberShop] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAllShops, setShowAllShops] = useState(false);
 
-    const barberShops = [
-      {
-        name: 'Barber Shop 1',
-        location: '123 Main St',
-        contact: '555-1234',
-        services: [
-          { name: 'Haircut', price: 20 },
-          { name: 'Shave', price: 15 },
-          { name: 'Shave', price: 15 },
-          { name: 'Shave', price: 15 },
-          { name: 'Shave', price: 15 },
-          { name: 'Shave', price: 15 },
-          { name: 'Shave', price: 15 },
-        ],
-      },
-      // Add more barber shops here...
-    ];
+  const barberShops = [ {barberId:'1',barberName:"xyz", name: 'Barber Shop 1',rating:4.7, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
+  {barberId:'2', barberName:"xyz",name: 'Barber Shop 1',rating:4, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
+  {barberId:'3', barberName:"xyz",name: 'Barber Shop 1',rating:4.8, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
+  {barberId:'4', barberName:"xyz",name: 'Barber Shop 1',rating:5, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
+  {barberId:'5', barberName:"xyz",name: 'Barber Shop 1',rating:3, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
+  {barberId:'6', barberName:"xyz",name: 'Barber Shop 1',rating:3.5, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
+];
 
-    const handleBarberShopSelect = (barberShop) => {
-      setSelectedBarberShop(barberShop);
-    };
-  
-    const handleTimeSlotSelect = (service) => {
-      setSelectedService(service);
-      // Here, you can implement the logic to proceed with the booking.
-    };
-
-  const handleOpenModal = () => {
+  const handleBarberShopSelect = (barberShop) => {
+    setSelectedBarberShop(barberShop);
     setIsModalOpen(true);
+  };
+
+  const handleTimeSlotSelect = (service) => {
+    setSelectedService(service);
+    // Implement booking logic here...
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  const toggleShowAllShops = () => {
+    setShowAllShops(!showAllShops);
+  };
+
+  const shopsToDisplay = showAllShops ? barberShops : barberShops.slice(0, 4);
+
   return (
     <div className="mt-5 container">
-        <h2 className=''>
-          Shops Near You
-        </h2>
-        <div className="row row-cols-sm-2 row-cols-md-3 mt-3 g-4">
-          {
-            barberShops.map((shop,index)=>(
-              <div key={index} className="col">
-              <div className="card">
-                <div className="card-body">
-                 {shop.name}
-                  <button className='btn btn-success' onClick={()=>{
-                    handleOpenModal();
-                    handleBarberShopSelect(shop)}}  
-                    style={{ float: "right" }}>Book Slot</button>
-                </div>
+      <h2 className="display-5 bold">Shops Near You</h2>
+      <div className="row row-cols-sm-3 row-cols-md-4 mt-3 g-2">
+        {shopsToDisplay.map((shop, index) => (
+          <div key={index} className="col">
+            <div className="card">
+              <div className="card-body">
+                <h3  className="">
+                {shop.name}
+                </h3>
+                <NavLink
+                state={{ barberId: shop.barberId }}
+                 style={{fontSize:18,fontWeight:"normal",color:"#d3ab5e",
+                textDecoration: 'none', color: 'inherit' }} to={`/barber-profile/${shop.barberName}`}>
+                    {shop.barberName}
+                  </NavLink>
+                <div 
+                style={{fontSize:14,fontWeight:"bold",color:"#d3ab5e",
+                textDecoration: 'none', color: 'inherit' }} >{shop.rating} {generateStarRating(shop.rating)} </div>
+                <button
+                  className="btn"
+                  onClick={() => handleBarberShopSelect(shop)}
+                  style={{ float: "right" , fontWeight:"bold",backgroundColor:"#285167",color:"#d3ab5e"}}
+                >
+                  Book Slot
+                </button>
               </div>
             </div>
-            ))
-          }
-          <PlainModal isOpen={isModalOpen} onClose={handleCloseModal} body={<BarberShopDetail barberShop={selectedBarberShop}
-          onTimeSlotSelect={handleTimeSlotSelect}/>}/>
-        </div>
+          </div>
+        ))}
       </div>
-  )
+      {barberShops.length > 4 && (
+        <div className="mt-3">
+          <button
+            style={{display:"block",margin:'auto'}}
+            className="btn"
+            onClick={toggleShowAllShops}
+          >
+            {showAllShops ?  <FaAngleUp fontSize={40}  style={{color:"#285067"}}/> : <FaAngleDown fontSize={40}  style={{color:"#285067"}}/> }
+          </button>
+        </div>
+      )}
+      {isModalOpen && (
+        <PlainModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          body={<BarberShopDetail barberShop={selectedBarberShop} onTimeSlotSelect={handleTimeSlotSelect} />}
+        />
+      )}
+    </div>
+  );
 }
 
-export default Shops
+export default Shops;

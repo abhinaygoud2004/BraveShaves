@@ -6,7 +6,8 @@ import { Route, Routes } from 'react-router-dom';
 import Login from './Login/Login'
 import SignUp from './SignUp/SignUp'
 import MyProfile from './myprofile/MyProfile';
-
+import BarberProfile from './BarberProfile/BarberProfile';
+import Shops from './Shops/Shops';
 
 function RootLayout() {
   return (
@@ -17,6 +18,8 @@ function RootLayout() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/myprofile" element={<MyProfile/>}/>
+        <Route path="/barber-profile/:barberName" element={<BarberProfile />} />
+        <Route path="/shops" element={<Shops />} />
       </Routes>
       <Footer />
     </div>
