@@ -12,9 +12,9 @@ export const loginRequest = () => ({
   type: AuthTypes.ACTION.LOGIN_REQUEST,
 });
 
-export const loginSuccess = (user) => ({
+export const loginSuccess = (userId) => ({
   type: AuthTypes.ACTION.LOGIN_SUCCESS,
-  payload: user,
+  payload: userId,
 });
 
 export const loginFailure = (error) => ({
@@ -43,10 +43,10 @@ export const login = (credentials) => {
 
     try {
       const response = await axios.post('http://localhost:4000/user-api/login', credentials);
-      const user = response.data;
+      const userId = response.data.userId;
       if(response.data.message==="success"){
         dispatch(setIsLogin(true))
-        dispatch(loginSuccess(user));
+        dispatch(loginSuccess(userId));
         localStorage.setItem("token",response.data.token)
       }
     } catch (error) {

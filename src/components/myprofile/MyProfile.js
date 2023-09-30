@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './MyProfile.css'
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserData } from '../../redux/actions/userAction';
 
 function MyProfile() {
-  const [userData, setUserData] = useState({
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    address: '123 Main St',
-    phoneNumber: '555-1234',
-    // Add more user details here
-  });
-
+  const dispatch = useDispatch();
+  const userId=useSelector((state)=>state.auth.userId);
+  // useEffect(()=>{
+  //  dispatch(getUserData(userId))
+  // },[])
+  const userData=useSelector((state)=>state.user.userData)
+console.log("user data is ",userData)
   const [previousBookings, setPreviousBookings] = useState([
     {
       id: 1,
@@ -32,10 +33,10 @@ function MyProfile() {
       <div className="mb-4">
         <h3 className="mb-2">Personal Information</h3>
         <div className="card p-3">
-          <p className="mb-2">Name: {userData.name}</p>
-          <p className="mb-2">Email: {userData.email}</p>
-          <p className="mb-2">Address: {userData.address}</p>
-          <p className="mb-2">Phone Number: {userData.phoneNumber}</p>
+          <p className="mb-2">Name: {userId}</p>
+          <p className="mb-2">Email: {userData?.email}</p>
+          {/* <p className="mb-2">Address: {userData.address}</p> */}
+          {/* <p className="mb-2">Phone Number: {userData.phoneNumber}</p> */}
           {/* Add more user details as needed */}
         </div>
       </div>

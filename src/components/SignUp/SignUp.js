@@ -6,14 +6,25 @@ import { login, loginRequest, loginSuccess, loginFailure, signup } from '../../r
 import { useDispatch,useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 function SignUp() {
+    const { v4: uuidv4 } = require('uuid');
     let {register,handleSubmit,formState:{errors}}=useForm()
     const dispatch=useDispatch();
     const users=useSelector((state)=>state.users)
     //HTTP req error state
     let [err,setErr]=useState("")
+
+    function generateUserId() {
+        return uuidv4();
+    }
     let addUser=(newUser)=>{
-        let usr=newUser;
-        dispatch(signup(usr))
+        const userId = generateUserId(); // Replace this with your logic to get the user ID
+        
+        // Create a modified newUser object with the appended user ID
+        const modifiedUser = {
+            ...newUser,
+            userId: userId, // Append the user ID here
+        };
+        dispatch(signup(modifiedUser))
     }
     let navigate=useNavigate()
   return (

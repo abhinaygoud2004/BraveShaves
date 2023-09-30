@@ -10,17 +10,27 @@ const multerObj=require("./middlewares/cloudinaryConfig")
 
 userApp.use(exp.json());
 
+userApp.get('/get-user/:userId',
+  expressAsyncHandler(async (request, response) => {
+    // Get the user ID from the URL parameters
+    const userId = request.params.userId;
 
-userApp.get('/get-users',
-    expressAsyncHandler(async (request, response) => {
-        //get userCollectionObj
-        const userCollectionObj = request.app.get("userCollectionObj")
+    // Get userCollectionObj
+    const userCollectionObj = request.app.get("userCollectionObj");
 
-        //get users from db
-        let usersList = await userCollectionObj.find().toArray()
-        //send res
-        response.status(200).send({ message: "List of users", payload: usersList })
-    }))
+    // Find the user with the specified user ID
+    let user = await userCollectionObj.findOne({ userId });
+
+    if (!user) {
+      // If the user is not found, return an error response
+      response.status(404).send({ message: "User not found" });
+    } else {
+      // If the user is found, return the user data
+      response.status(200).send({ message: "User data", payload: user });
+    }
+  })
+);
+
 
 
 userApp.post("/register",
@@ -49,6 +59,7 @@ userApp.post("/register",
             //replace plain password with hashed password
             newUser.password = hashedPassword;
             //insert user
+
             await userCollectionObj.insertOne(newUser)
             //send response
             response.status(201).send({ message: "User created" })
@@ -84,7 +95,7 @@ userApp.post("/register",
                 let jwtToken=jwt.sign({username:userOfDB.username},"abc",{expiresIn:20})
                 //send token in response
                 delete userOfDB.password
-                 response.status(200).send({message:"success",token:jwtToken,user:userOfDB})
+                 response.status(200).send({message:"success",token:jwtToken,userId:userOfDB.userId})
              }
           }
 }))

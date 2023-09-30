@@ -2,6 +2,7 @@ import { AuthTypes } from "../types";
 
 const initialState = {
   user: null,
+  userId:null,
   isLogin: false, 
   isLoading: false,
   error: null,
@@ -21,7 +22,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        user: action.payload,
+        userId:action.payload,
         isLogin: true, // Update isLogin to true upon successful login
         error: null,
       };

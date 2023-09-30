@@ -2,12 +2,14 @@ import './Login.css'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
+import { getUserData } from '../../redux/actions/userAction';
 import { login, loginRequest, loginSuccess, loginFailure } from '../../redux/actions/authActions';
 
 
 function Login() {
     const dispatch = useDispatch();
     const isLogin=useSelector((state)=>state.auth.isLogin)
+    const userId=useSelector((state)=>state.auth.userId);
     const [credentials, setCredentials] = useState({
         username: '',
         password: '',
@@ -16,6 +18,8 @@ function Login() {
     useEffect(()=>{
         if(isLogin)
             navigate('/')
+            console.log("user id is ",userId)
+        dispatch(getUserData(userId))
     },[isLogin])
     const handleInputChange = (event) => {
         event.preventDefault();
@@ -28,6 +32,7 @@ function Login() {
     const handleLogin = (event) => {
         event.preventDefault();
         dispatch(login(credentials));
+        
       };
     return (
         <div className='container-fluid main'>
