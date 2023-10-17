@@ -9,12 +9,15 @@ import MyProfile from './myprofile/MyProfile';
 import BarberProfile from './BarberProfile/BarberProfile';
 import Shops from './Shops/Shops';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
+import ScrollToTop from './ScrollToTop/ScrollToTop';
 
 function RootLayout() {
   return (
     <div>
       <Navbar />
+      <ScrollToTop/>
       <Routes>
+       
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />

@@ -3,34 +3,44 @@ import PlainModal from '../Modal/PlainModal';
 import BarberShopDetail from '../BarberShopDetail/BarberShopDetail';
 import {FaAngleUp} from 'react-icons/fa'
 import {FaAngleDown} from 'react-icons/fa'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { FaStar, FaStarHalfAlt,FaRegStar } from 'react-icons/fa';
-
-let generateStarRating=(rating)=>{
-  const maxRating = 5;
-  const starRating = [];
-  const roundedRating = Math.round(rating * 2) / 2; // Round to the nearest half star
-
-  for (let i = 1; i <= maxRating; i++) {
-    if (i <= roundedRating) {
-      starRating.push(<FaStar  key={i} />);
-    } else if (i === roundedRating + 0.5) {
-      starRating.push(<FaStarHalfAlt  key={i} />);
-    } else {
-      starRating.push(<FaRegStar  key={i}  />);
-    }
-  }
-
-  return starRating;
-}
-
+import { useSelector } from 'react-redux';
 
 
 function Shops() {
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const navigate=useNavigate();
   const [selectedBarberShop, setSelectedBarberShop] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllShops, setShowAllShops] = useState(false);
+
+  let generateStarRating=(rating)=>{
+    const maxRating = 5;
+    const starRating = [];
+    const roundedRating = Math.round(rating * 2) / 2; // Round to the nearest half star
+  
+    for (let i = 1; i <= maxRating; i++) {
+      if (i <= roundedRating) {
+        starRating.push(<FaStar  key={i} />);
+      } else if (i === roundedRating + 0.5) {
+        starRating.push(<FaStarHalfAlt  key={i} />);
+      } else {
+        starRating.push(<FaRegStar  key={i}  />);
+      }
+    }
+  
+    return starRating;
+  }  
+
+  let handleBarberShopSelect = (barberShop) => {
+    if(!isLogin){
+      navigate('/login');
+    }
+    setSelectedBarberShop(barberShop);
+    setIsModalOpen(true);
+  };
 
   const barberShops = [ {barberId:'1',barberName:"xyz", name: 'Barber Shop 1',rating:4.7, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
   {barberId:'2', barberName:"xyz",name: 'Barber Shop 1',rating:4, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
@@ -40,10 +50,7 @@ function Shops() {
   {barberId:'6', barberName:"xyz",name: 'Barber Shop 1',rating:3.5, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, { name: 'Shave', price: 15 }, ], }, 
 ];
 
-  const handleBarberShopSelect = (barberShop) => {
-    setSelectedBarberShop(barberShop);
-    setIsModalOpen(true);
-  };
+  
 
   const handleTimeSlotSelect = (service) => {
     setSelectedService(service);
