@@ -6,9 +6,9 @@ import { getUserData } from '../../redux/actions/userAction';
 function MyProfile() {
   const dispatch = useDispatch();
   const userId=useSelector((state)=>state.auth.userId);
-  // useEffect(()=>{
-  //  dispatch(getUserData(userId))
-  // },[])
+  useEffect(()=>{
+   dispatch(getUserData(userId))
+  },[])
   const userData=useSelector((state)=>state.user.userData)
 console.log("user data is ",userData)
   const [previousBookings, setPreviousBookings] = useState([

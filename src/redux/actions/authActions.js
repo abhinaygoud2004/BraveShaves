@@ -48,6 +48,7 @@ export const login = (credentials) => {
         dispatch(setIsLogin(true))
         dispatch(loginSuccess(userId));
         localStorage.setItem("token",response.data.token)
+        localStorage.setItem("userId",response.data.userId)
       }
     } catch (error) {
       dispatch(loginFailure(error.message));

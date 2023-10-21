@@ -2,8 +2,8 @@ import { AuthTypes } from "../types";
 
 const initialState = {
   user: null,
-  userId:null,
-  isLogin: false, 
+  userId:localStorage.getItem('userId'),
+  isLogin: localStorage.getItem('token')||false, 
   isLoading: false,
   error: null,
 };

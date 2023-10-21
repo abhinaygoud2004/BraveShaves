@@ -92,7 +92,7 @@ userApp.post("/register",
              else{
                 //create a JWT token
                 
-                let jwtToken=jwt.sign({username:userOfDB.username},"abc",{expiresIn:20})
+                let jwtToken=jwt.sign({username:userOfDB.username},"abc",{expiresIn:"1 days"})
                 //send token in response
                 delete userOfDB.password
                  response.status(200).send({message:"success",token:jwtToken,userId:userOfDB.userId})
