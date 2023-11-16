@@ -1,0 +1,8 @@
+.card-shops {
+    transition: transform 0.2s ease-in-out;
+  }
+  .card-shops:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgb(40,81,103);
+    z-index: 1;
+  }

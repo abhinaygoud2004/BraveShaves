@@ -5,7 +5,7 @@ import { useState } from 'react';
 function PlainModal(props) {
     return (
         <Modal show={props.isOpen} onHide={()=>
-            props.onClose()}>
+            props.onClose()} >
             <Modal.Header closeButton>
                 <Modal.Title>Modal Title</Modal.Title>
             </Modal.Header>

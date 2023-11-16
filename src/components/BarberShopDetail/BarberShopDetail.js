@@ -1,8 +1,10 @@
+// BarberShopDetail.js
 import React, { useState } from 'react';
 import DateTimePicker from '../DateTimePicker/DateTimePicker';
 
 const BarberShopDetail = ({ barberShop, onServiceSelect, onTimeSlotSelect }) => {
   const [selectedServices, setSelectedServices] = useState([]);
+  const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const handleServiceSelect = (service) => {
@@ -13,14 +15,16 @@ const BarberShopDetail = ({ barberShop, onServiceSelect, onTimeSlotSelect }) => 
       setSelectedServices([...selectedServices, service]);
     }
   };
+  console.log(selectedServices)
 
   const handleTimeSelect = (selectedTime) => {
-    // Handle the selected services and time, for example, pass them to a parent component or perform some action.
-    onTimeSlotSelect(selectedServices, selectedTime);
-
+    // Pass the selected services and time to a parent component for availability checking.
+    onTimeSlotSelect(selectedServices, selectedTime,barberShop.barberId);
+    setSelectedTime(selectedTime);
     // Close the time picker after selecting a time.
-    setShowTimePicker(false);
+    // setShowTimePicker(false);
   };
+  console.log(selectedTime)
 
   return (
     <div>
@@ -54,7 +58,9 @@ const BarberShopDetail = ({ barberShop, onServiceSelect, onTimeSlotSelect }) => 
 
       {selectedServices.length > 0 && (
         <div>
-          <button className='button' onClick={() => setShowTimePicker(true)}>Select Time</button>
+          <button className="button" onClick={() => setShowTimePicker(true)}>
+            Select Time
+          </button>
           {showTimePicker && (
             <DateTimePicker
               onTimeSelect={handleTimeSelect}
