@@ -16,7 +16,7 @@ function PlainModal(props) {
                 <Button variant="secondary" onClick={()=>props.onClose()}>
                     Close
                 </Button>
-                <Button variant="primary">Save changes</Button>
+                <Button onClick={()=>props.onSave()} variant="primary">Save changes</Button>
             </Modal.Footer>
         </Modal>
     )

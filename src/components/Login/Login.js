@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserData } from '../../redux/actions/userAction';
-import { login, loginRequest, loginSuccess, loginFailure } from '../../redux/actions/authActions';
+import { login } from '../../redux/actions/authActions';
 
 
 function Login() {
@@ -32,7 +32,6 @@ function Login() {
     const handleLogin = (event) => {
         event.preventDefault();
         dispatch(login(credentials));
-        
       };
     return (
         <div className='container-fluid main'>

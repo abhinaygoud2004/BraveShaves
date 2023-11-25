@@ -2,15 +2,21 @@ import React, { useState } from 'react';
 import PlainModal from '../Modal/PlainModal';
 import BarberShopDetail from '../BarberShopDetail/BarberShopDetail';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { bookAppointment } from '../../redux/actions/bookingActions';
 import './Shops.css';
-import { useSelector } from 'react-redux';
 
 function Shops() {
+  const dispatch = useDispatch();
+  const userId=useSelector((state)=>state.auth.userId);
   const isLogin = useSelector((state) => state.auth.isLogin);
   const navigate = useNavigate();
   const [selectedBarberShop, setSelectedBarberShop] = useState(null);
+  const [selectedServices,setSelectedServices]=useState()
+  const [selectedBarberId, setSelectedBarberId] = useState();
+  const [selectedTime,setSelectedTime]=useState()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllShops, setShowAllShops] = useState(false);
 
@@ -93,24 +99,16 @@ function Shops() {
     return newTime;
   };
   const handleTimeSlotSelect = (selectedServices, selectedTime, barberId) => {
-    // Calculate the end time by adding the total time needed to the selected time
-    const totalTimeNeeded = selectedServices.reduce((total, service) => {
-      return total + service.time;
-    }, 0);
-    const endTime = addMinutes(selectedTime, totalTimeNeeded);
-  
-    // Check the availability of selected services within the provided time range
-    const isTimeAvailable = checkAvailability(selectedServices, selectedTime, endTime, barberId);
-    console.log(selectedTime, endTime, barberId);
-  
-    if (isTimeAvailable) {
-      // Time is available, proceed with booking or display a confirmation message
-      console.log('Time is available for selected services.');
-    } else {
-      // Time is not available, handle it accordingly (e.g., display an error message)
-      console.log('Time is not available for selected services.');
-    }
+    console.log(selectedServices,selectedTime.toISOString(),barberId)
+    setSelectedServices(selectedServices);
+    setSelectedTime(selectedTime.toISOString())
+    setSelectedBarberId(barberId)
   };
+
+  const handleBookedSlot=()=>{
+    console.log(barberShops.services)
+   dispatch(bookAppointment(userId,selectedBarberShop.barberId,selectedTime,selectedServices));
+  }
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -192,6 +190,7 @@ function Shops() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           body={<BarberShopDetail barberShop={selectedBarberShop} onTimeSlotSelect={handleTimeSlotSelect} />}
+          onSave={handleBookedSlot}
         />
       )}
     </div>

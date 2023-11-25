@@ -4,7 +4,6 @@ const initialState = {
   user: null,
   userId:localStorage.getItem('userId'),
   isLogin: localStorage.getItem('token')||false, 
-  isLoading: false,
   error: null,
 };
 
@@ -21,7 +20,6 @@ const authReducer = (state = initialState, action) => {
     case AuthTypes.ACTION.SIGNUP_SUCCESS:
       return {
         ...state,
-        isLoading: false,
         userId:action.payload,
         isLogin: true, // Update isLogin to true upon successful login
         error: null,
@@ -30,7 +28,6 @@ const authReducer = (state = initialState, action) => {
     case AuthTypes.ACTION.SIGNUP_FAILURE:
       return {
         ...state,
-        isLoading: false,
         error: action.payload,
       };
       case AuthTypes.ACTION.SET_IS_LOGIN:

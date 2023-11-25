@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import DateTimePicker from '../DateTimePicker/DateTimePicker';
 
-const BarberShopDetail = ({ barberShop, onServiceSelect, onTimeSlotSelect }) => {
+const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);

@@ -7,6 +7,8 @@ app.use(cors());
 
 //import userApp
 const userApp=require("./APIs/usersApi")
+const barberApp=require("./APIs/barbersApi");
+const appointmentApp=require("./APIs/appointmentBookingApi");
 
 require('dotenv').config()
 //assign port number
@@ -14,6 +16,8 @@ const port=4000
 
 //execute userApi when path starts with /user-api
 app.use('/user-api',userApp)
+app.use('/barber-api',barberApp);
+app.use('/appointment-api',appointmentApp);
 
 
 //assign port number
@@ -35,8 +39,12 @@ mclient.connect('mongodb://127.0.0.1:27017')
   const dbobj=dbRef.db('braveshaves')
   //connect to collections of this database
   const userCollectionObj=dbobj.collection('users')
+  const barberCollectionObj=dbobj.collection('barbers')
+  const appointmentCollectionObj=dbobj.collection('appointments');
   //share collections to APIs
   app.set('userCollectionObj',userCollectionObj)
+  app.set('barberCollectionObj',barberCollectionObj)
+  app.set('appointmentCollectionObj',appointmentCollectionObj)
   console.log("DB connections is successfull")
 })
 .catch(err=>console.log("database connect error :",err))

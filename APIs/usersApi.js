@@ -32,7 +32,6 @@ userApp.get('/get-user/:userId',
 );
 
 
-
 userApp.post("/register",
     expressAsyncHandler(async (request, response) => {
         //get userCollectionObj

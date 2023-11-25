@@ -1,132 +1,97 @@
-const express = require('express');
-const appointmentApp = express.Router();
-const expressAsyncHandler = require('express-async-handler');
-const verifyToken = require('./middlewares/verifyToken'); // Import your authentication middleware
+const exp = require("express");
+const appointmentApp = exp.Router();
+const expressAsyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+const verifyToken = require("./middlewares/verifyToken");
 
-// Define an Appointment model/schema if using Mongoose
-const AppointmentModel = require('./models/appointment');
+appointmentApp.use(exp.json());
 
-appointmentApp.use(express.json());
-
-// Endpoint to book an appointment
 appointmentApp.post(
-  '/book-appointment',
-  verifyToken, // Protect this route with authentication middleware
-  expressAsyncHandler(async (req, res) => {
+  "/book-appointment/:userId",
+  expressAsyncHandler(async (request, response) => {
+    const { barberId, appointmentDateTime } = request.body;
+
     try {
-      // Get user ID from the authenticated user's token
-      const userId = req.user.id;
 
-      // Retrieve appointment details from the request body
-      const { barberId, serviceId, date, time } = req.body;
+      // Get the user and barber ID from the decoded token
+      const userId = request.params.userId;
 
-      // Check if the selected date and time are available (You should implement this logic)
+      // Get userCollectionObj and barberCollectionObj
+      const userCollectionObj = request.app.get("userCollectionObj");
+      const barberCollectionObj = request.app.get("barberCollectionObj");
 
-      // If available, create a new appointment
-      const newAppointment = new AppointmentModel({
-        userId,
-        barberId,
-        serviceId,
-        date,
-        time,
-      });
+      // Convert appointmentDateTime to a JavaScript Date object
+      const appointmentDate = new Date(appointmentDateTime);
 
-      // Save the appointment to the database
-      await newAppointment.save();
+      // Book the appointment
+      await userCollectionObj.updateOne(
+        { userId },
+        {
+          $push: {
+            appointments: {
+              barber_id: barberId,
+              appointment_date: appointmentDate,
+              status: "pending",
+              services:["Haircutting"],
+            },
+          },
+        }
+      );
 
-      res.status(201).json({
-        message: 'Appointment booked successfully',
-        payload: newAppointment,
-      });
+      await barberCollectionObj.updateOne(
+        { barberId },
+        {
+          $push: {
+            appointments: {
+              user_id: userId,
+              appointment_date: appointmentDate,
+              status: "pending",
+              services:["Haircutting"]
+            },
+          },
+        }
+      );
+
+      response.status(201).send({ message: "Appointment booked successfully" });
     } catch (error) {
-      res.status(500).json({ message: 'Error booking appointment', error });
+      console.error(error);
+      response.status(500).send({ message: "Internal server error" });
     }
   })
 );
 
-// Endpoint to update an appointment
-appointmentApp.put(
-  '/update-appointment/:id',
-  verifyToken, // Protect this route with authentication middleware
-  expressAsyncHandler(async (req, res) => {
-    try {
-      const appointmentId = req.params.id;
-      const userId = req.user.id; // Ensure that the user updating the appointment is the owner
-
-      // Retrieve appointment details from the request body
-      const { barberId, serviceId, date, time } = req.body;
-
-      // Check if the appointment exists and belongs to the user
-      const existingAppointment = await AppointmentModel.findById(appointmentId);
-
-      if (!existingAppointment || existingAppointment.userId !== userId) {
-        return res.status(404).json({ message: 'Appointment not found' });
-      }
-
-      // Update appointment details
-      existingAppointment.barberId = barberId;
-      existingAppointment.serviceId = serviceId;
-      existingAppointment.date = date;
-      existingAppointment.time = time;
-
-      // Save the updated appointment
-      await existingAppointment.save();
-
-      res.status(200).json({
-        message: 'Appointment updated successfully',
-        payload: existingAppointment,
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Error updating appointment', error });
-    }
-  })
-);
-
-// Endpoint to cancel an appointment
-appointmentApp.delete(
-  '/cancel-appointment/:id',
-  verifyToken, // Protect this route with authentication middleware
-  expressAsyncHandler(async (req, res) => {
-    try {
-      const appointmentId = req.params.id;
-      const userId = req.user.id; // Ensure that the user canceling the appointment is the owner
-
-      // Check if the appointment exists and belongs to the user
-      const existingAppointment = await AppointmentModel.findById(appointmentId);
-
-      if (!existingAppointment || existingAppointment.userId !== userId) {
-        return res.status(404).json({ message: 'Appointment not found' });
-      }
-
-      // Delete the appointment from the database
-      await AppointmentModel.findByIdAndDelete(appointmentId);
-
-      res.status(200).json({ message: 'Appointment canceled successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error canceling appointment', error });
-    }
-  })
-);
-
-// Endpoint to get a user's appointments
 appointmentApp.get(
-  '/user-appointments',
-  verifyToken, // Protect this route with authentication middleware
-  expressAsyncHandler(async (req, res) => {
+  "/fetch-appointments/:userId",
+  expressAsyncHandler(async (request, response) => {
     try {
-      const userId = req.user.id;
+      // Get the user ID from the request parameters
+      const userId = request.params.userId;
 
-      // Retrieve the user's appointments from the database
-      const userAppointments = await AppointmentModel.find({ userId });
+      // Get userCollectionObj
+      const userCollectionObj = request.app.get("userCollectionObj");
 
-      res.status(200).json({
-        message: 'User appointments',
-        payload: userAppointments,
-      });
+      // Find the user with the specified user ID
+      const user = await userCollectionObj.findOne({ userId });
+
+      if (!user) {
+        // If the user is not found, return an error response
+        response.status(404).send({ message: "User not found" });
+      } else {
+        // If the user is found, return the appointments array
+        response.status(200).send({ message: "User appointments", payload: user.appointments });
+      }
     } catch (error) {
-      res.status(500).json({ message: 'Error retrieving user appointments', error });
+      console.error(error);
+      response.status(500).send({ message: "Internal server error" });
     }
   })
 );
 
+
+// private router
+appointmentApp.get("/test", verifyToken, (req, res) => {
+  res.send({ message: "reply from private route" });
+});
+
+//export appointmentApp
 module.exports = appointmentApp;
