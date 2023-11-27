@@ -1,26 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import './MyProfile.css'
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserData } from '../../redux/actions/userAction';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import { fetchAppointments } from '../../redux/actions/bookingActions';
+import React, { useState, useEffect } from "react";
+import "./MyProfile.css";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserData } from "../../redux/actions/userAction";
+import { getAllBarbers } from "../../redux/actions/barberAction";
+import { fetchAppointments } from "../../redux/actions/bookingActions";
 
 function MyProfile() {
   const dispatch = useDispatch();
-  const appointments=useSelector((state)=>state.booking.appointments);
+  const appointments = useSelector((state) => state.booking.appointments);
+  const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [previousBookings, setPreviousBookings] = useState([]);
-  console.log("appo is ",appointments,previousBookings.length)
-  const userId=useSelector((state)=>state.auth.userId);
-  useEffect(()=>{
-   dispatch(fetchAppointments(userId))
-   dispatch(getUserData(userId))
-  },[])
+  const userId = useSelector((state) => state.auth.userId);
+  const barberData = useSelector((state) => state.barber.barberData);
+
+  const getBarberNameById = (barberId) => {
+    const foundBarber = barberData?.find(
+      (barber) => barber.barberId === barberId
+    );
+    return foundBarber ? foundBarber.barberName : "Unknown Barber";
+  };
+
   useEffect(() => {
+    dispatch(fetchAppointments(userId));
+    dispatch(getUserData(userId));
+    dispatch(getAllBarbers());
+  }, []);
+  useEffect(() => {
+    console.log(userData);
     setPreviousBookings(appointments);
+    const upcoming = appointments?.filter(
+      (booking) => booking.status === "pending"
+    );
+    const previous = appointments?.filter(
+      (booking) => booking.status === "finished"
+    );
+    setUpcomingBookings(upcoming);
+    setPreviousBookings(previous);
   }, [appointments]);
-  
-  
-  const userData=useSelector((state)=>state.user.userData)
+
+  const userData = useSelector((state) => state.user.userData);
 
   return (
     <div className="container head">
@@ -28,23 +46,45 @@ function MyProfile() {
       <div className="mb-4">
         <h3 className="mb-2">Personal Information</h3>
         <div className="card p-3">
-          <p className="mb-2">Name: {userId}</p>
+          <p className="mb-2">Name: {userData?.username}</p>
           <p className="mb-2">Email: {userData?.email}</p>
-          {/* <p className="mb-2">Address: {userData.address}</p> */}
-          {/* <p className="mb-2">Phone Number: {userData.phoneNumber}</p> */}
-          {/* Add more user details as needed */}
         </div>
       </div>
 
-      <h3 className="mb-2">Previous Bookings</h3>
-      {previousBookings.length > 0 ? (
+      <h3 className="mb-2">Upcoming Bookings</h3>
+      {upcomingBookings?.length > 0 ? (
         <ul className="list-group">
-          {previousBookings.map((booking) => (
+          {upcomingBookings?.map((booking) => (
+            <li key={booking?.id} className="list-group-item">
+              <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
+              <h6>Services:</h6>
+              <ul>
+                {booking?.services.map((service, index) => (
+                  <li key={index}>{service.name}</li>
+                ))}
+              </ul>
+              <p>
+                Date: {new Date(booking?.appointment_date).toLocaleString()}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No upcoming bookings found.</p>
+      )}
+
+      <h3 className="mb-2">Previous Bookings</h3>
+      {previousBookings?.length > 0 ? (
+        <ul className="list-group">
+          {previousBookings?.map((booking) => (
             <li key={booking.id} className="list-group-item">
-              {/* <p className="mb-2">Booking ID: {booking.id}</p> */}
-              <p className="mb-2">Services: {booking.services}</p>
-              {/* <p className="mb-2">Date: {booking.date}</p> */}
-              {/* Add more booking details as needed */}
+              <h6>Services:</h6>
+              <ul>
+                {booking.services?.map((service, index) => (
+                  <li key={index}>{service.name}</li>
+                ))}
+              </ul>
+              <p>Date: {new Date(booking.appointment_date).toLocaleString()}</p>
             </li>
           ))}
         </ul>

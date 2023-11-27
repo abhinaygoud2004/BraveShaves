@@ -9,13 +9,13 @@ const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
 
   const handleServiceSelect = (service) => {
     // Check if the service is already selected, and toggle its selection accordingly.
-    if (selectedServices.includes(service)) {
-      setSelectedServices(selectedServices.filter((s) => s !== service));
-    } else {
-      setSelectedServices([...selectedServices, service]);
-    }
+    // if (selectedServices.includes(service)) {
+    //   setSelectedServices(selectedServices.filter((s) => s !== service));
+    // } else {
+    //   setSelectedServices([...selectedServices, service]);
+    // }
+    setSelectedServices([...selectedServices, service]);
   };
-  console.log(selectedServices)
 
   const handleTimeSelect = (selectedTime) => {
     // Pass the selected services and time to a parent component for availability checking.
@@ -24,7 +24,6 @@ const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
     // Close the time picker after selecting a time.
     // setShowTimePicker(false);
   };
-  console.log(selectedTime)
 
   return (
     <div>

@@ -30,12 +30,12 @@ export const fetchAppointmentsFailure = (error) => ({
 });
 
 // Async Action Creators
-export const bookAppointment = (userId,barberId, appointmentDateTime,services) => {
+export const bookAppointment = (userId,barberId, selectedTime,selectedServices) => {
   return async (dispatch) => {
     dispatch(bookAppointmentRequest());
     try {
       // Perform the booking request to your backend API
-      await axios.post(`http://localhost:4000/appointment-api/book-appointment/${userId}`, { barberId, appointmentDateTime ,services});
+      await axios.post(`http://localhost:4000/appointment-api/book-appointment/${userId}`, { barberId, selectedTime ,selectedServices});
       dispatch(bookAppointmentSuccess());
       dispatch(fetchAppointments(userId)); // After booking, fetch updated appointments
     } catch (error) {

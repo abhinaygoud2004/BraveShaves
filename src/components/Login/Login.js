@@ -18,7 +18,6 @@ function Login() {
     useEffect(()=>{
         if(isLogin)
             navigate('/')
-            console.log("user id is ",userId)
         dispatch(getUserData(userId))
     },[isLogin])
     const handleInputChange = (event) => {

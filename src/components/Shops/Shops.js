@@ -34,7 +34,6 @@ function Shops() {
         starRating.push(<FaRegStar key={i} />);
       }
     }
-
     return starRating;
   };
 
@@ -86,7 +85,6 @@ function Shops() {
         }
         shopSchedule[time].push(name);
       }
-  console.log("shop schedule",shopSchedule)
       return shopSchedule;
     } else {
       // Barber shop with the provided barberId was not found
@@ -99,15 +97,14 @@ function Shops() {
     return newTime;
   };
   const handleTimeSlotSelect = (selectedServices, selectedTime, barberId) => {
-    console.log(selectedServices,selectedTime.toISOString(),barberId)
     setSelectedServices(selectedServices);
     setSelectedTime(selectedTime.toISOString())
     setSelectedBarberId(barberId)
   };
 
   const handleBookedSlot=()=>{
-    console.log(barberShops.services)
    dispatch(bookAppointment(userId,selectedBarberShop.barberId,selectedTime,selectedServices));
+   handleCloseModal();
   }
 
   const handleCloseModal = () => {

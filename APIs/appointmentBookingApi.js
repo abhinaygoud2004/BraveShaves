@@ -9,7 +9,7 @@ appointmentApp.use(exp.json());
 appointmentApp.post(
   "/book-appointment/:userId",
   expressAsyncHandler(async (request, response) => {
-    const { barberId, appointmentDateTime } = request.body;
+    const { barberId, selectedTime,selectedServices } = request.body;
 
     try {
 
@@ -20,8 +20,8 @@ appointmentApp.post(
       const userCollectionObj = request.app.get("userCollectionObj");
       const barberCollectionObj = request.app.get("barberCollectionObj");
 
-      // Convert appointmentDateTime to a JavaScript Date object
-      const appointmentDate = new Date(appointmentDateTime);
+      // Convert selectedTime,selectedServices to a JavaScript Date object
+      const appointmentDate = new Date(selectedTime);
 
       // Book the appointment
       await userCollectionObj.updateOne(
@@ -30,9 +30,9 @@ appointmentApp.post(
           $push: {
             appointments: {
               barber_id: barberId,
-              appointment_date: appointmentDate,
+              appointment_date: selectedTime,
               status: "pending",
-              services:["Haircutting"],
+              services:selectedServices,
             },
           },
         }

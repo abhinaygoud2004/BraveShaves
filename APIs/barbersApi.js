@@ -36,7 +36,7 @@ barberApp.get('/get-barber/:barberId',
 
     // Find the barber with the specified barber ID
     let barber = await barberCollectionObj.findOne({ barberId });
-
+    // console.log(barber)
     if (!barber) {
       // If the barber is not found, return an error response
       response.status(404).send({ message: "barber not found" });
