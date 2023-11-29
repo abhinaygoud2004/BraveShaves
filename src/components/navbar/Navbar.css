@@ -1,10 +1,19 @@
-.nav-item{
-    color:red;
-}
-.navRight{
-    margin-left: 50%;
-    gap:5px;
-}
-.navbar{
+.nav-item {
+    color: red;
+  }
+  
+  .navRight {
+    margin-left: 30%;
+  }
+  
+  .navbar {
     background-color: #285167;
-}
+  }
+  
+  @media (max-width: 767px) {
+    /* Screen size less than or equal to 767px (md) */
+    .navRight {
+      margin-left: 80%;
+    }
+  }
+  

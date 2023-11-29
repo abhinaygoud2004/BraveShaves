@@ -2,9 +2,14 @@
     float: right;
 }
 .signBg{
-    padding: 80px;
+    padding: 10px;
     margin: auto;
     margin-top: 80px;
+}
+@media (min-width:576px){
+    .signBg{
+        width:50%;
+    }
 }
 .signHeading{
     color:#d3ac5e;

@@ -31,7 +31,7 @@ function SignUp() {
     <div className='container-fluid signMain pb-5'>
         {/*HTTP err message */}
         {err.length!=0&&<p className="text-center lead display-3 fw-bold text-danger">{err}</p>}
-        <form action="" onSubmit={handleSubmit(addUser)} className='signBg w-50 border border-0 rounded mt-0  pt-5'>
+        <form action="" onSubmit={handleSubmit(addUser)} className='signBg border border-0 rounded mt-0  pt-5'>
             <div className="form-floating">
                 <input type="text" name="username" placeholder='hi' id="username" className='form-control mt-3' {...register("username",{required:true})}/>
                 <label htmlFor="username"className='form-label'>Username</label>

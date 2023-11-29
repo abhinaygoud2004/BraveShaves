@@ -10,6 +10,7 @@ function MyProfile() {
   const appointments = useSelector((state) => state.booking.appointments);
   const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [previousBookings, setPreviousBookings] = useState([]);
+  const [missedBookings, setMissedBookings] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
   const barberData = useSelector((state) => state.barber.barberData);
 
@@ -25,17 +26,35 @@ function MyProfile() {
     dispatch(getUserData(userId));
     dispatch(getAllBarbers());
   }, []);
+
   useEffect(() => {
-    console.log(userData);
-    setPreviousBookings(appointments);
-    const upcoming = appointments?.filter(
-      (booking) => booking.status === "pending"
+    const currentDateTime = new Date();
+
+    // Filter pending bookings with a booked date less than the current date
+    const missed = appointments?.filter(
+      (booking) =>
+        booking.status === "pending" &&
+        new Date(booking.appointment_date) < currentDateTime
     );
+
+    // Filter previous bookings with a booked date less than the current date
     const previous = appointments?.filter(
-      (booking) => booking.status === "finished"
+      (booking) =>
+        booking.status === "finished" &&
+        new Date(booking.appointment_date) < currentDateTime
     );
+
+    // Filter upcoming bookings with a booked date greater than or equal to the current date
+    const upcoming = appointments?.filter(
+      (booking) =>
+        booking.status === "pending" &&
+        new Date(booking.appointment_date) >= currentDateTime
+    );
+
+    // Set the state variables accordingly
     setUpcomingBookings(upcoming);
     setPreviousBookings(previous);
+    setMissedBookings(missed);
   }, [appointments]);
 
   const userData = useSelector((state) => state.user.userData);
@@ -71,6 +90,28 @@ function MyProfile() {
         </ul>
       ) : (
         <p>No upcoming bookings found.</p>
+      )}
+
+      <h3 className="mb-2">Missed Bookings</h3>
+      {missedBookings?.length > 0 ? (
+        <ul className="list-group">
+          {missedBookings?.map((booking) => (
+            <li key={booking?.id} className="list-group-item">
+              <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
+              <h6>Services:</h6>
+              <ul>
+                {booking?.services.map((service, index) => (
+                  <li key={index}>{service.name}</li>
+                ))}
+              </ul>
+              <p>
+                Date: {new Date(booking?.appointment_date).toLocaleString()}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No missed bookings found.</p>
       )}
 
       <h3 className="mb-2">Previous Bookings</h3>
