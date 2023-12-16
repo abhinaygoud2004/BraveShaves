@@ -78,7 +78,7 @@ function MyProfile() {
               <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
               <h6>Services:</h6>
               <ul>
-                {booking?.services.map((service, index) => (
+                {booking?.services?.map((service, index) => (
                   <li key={index}>{service.name}</li>
                 ))}
               </ul>
@@ -100,7 +100,7 @@ function MyProfile() {
               <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
               <h6>Services:</h6>
               <ul>
-                {booking?.services.map((service, index) => (
+                {booking?.services?.map((service, index) => (
                   <li key={index}>{service.name}</li>
                 ))}
               </ul>
