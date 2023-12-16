@@ -11,7 +11,6 @@
 # production
 /build
 
-.env
 # misc
 .DS_Store
 .env.local
@@ -24,4 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 
-.env
+# .env
