@@ -33,7 +33,7 @@ app.use(exp.static(path.join(__dirname,'./build')))
 const mclient=require('mongodb').MongoClient;
 
 //connect to db server using mongoClient
-mclient.connect('mongodb://127.0.0.1:27017')
+mclient.connect(process.env.MCLIENT)
 .then((dbRef)=>{
   //connect to a database
   const dbobj=dbRef.db('braveshaves')
