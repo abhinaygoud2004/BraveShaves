@@ -15,17 +15,21 @@ function MyProfile() {
   const barberData = useSelector((state) => state.barber.barberData);
 
   const getBarberNameById = (barberId) => {
-    const foundBarber = barberData?.find(
-      (barber) => barber.barberId === barberId
-    );
-    return foundBarber ? foundBarber.barberName : "Unknown Barber";
+    // Check if barberData is an array
+    if (Array.isArray(barberData)) {
+      const foundBarber = barberData.find((barber) => barber.barberId === barberId);
+      return foundBarber ? foundBarber.barberName : "Unknown Barber";
+    } else {
+      return "Unknown Barber";
+    }
   };
+  
 
   useEffect(() => {
     dispatch(fetchAppointments(userId));
     dispatch(getUserData(userId));
     dispatch(getAllBarbers());
-  }, []);
+  }, [barberData]);
 
   useEffect(() => {
     const currentDateTime = new Date();

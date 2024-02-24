@@ -26,7 +26,6 @@ export const getBarberData = (barberId) => {
     try {
       const response = await axios.get(`http://localhost:4000/barber-api/get-barber/${barberId}`);
       const barber = response.data; // Assuming your API returns barber data
-      console.log(barber)
       dispatch(getBarberSuccess(barber));
     } catch (error) {
       dispatch(getBarberFailure(error.message));

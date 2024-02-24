@@ -7,7 +7,7 @@ function PlainModal(props) {
         <Modal show={props.isOpen} onHide={()=>
             props.onClose()} >
             <Modal.Header closeButton>
-                <Modal.Title>Modal Title</Modal.Title>
+                <Modal.Title>{props.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {props.body}

@@ -5,7 +5,6 @@ const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const verifyToken = require("./middlewares/verifyToken")
 const multerObj=require("./middlewares/cloudinaryConfig")
-
 barberApp.use(exp.json());
 
 barberApp.get('/get-allBarbers',
@@ -29,14 +28,13 @@ barberApp.get('/get-allBarbers',
 barberApp.get('/get-barber/:barberId',
   expressAsyncHandler(async (request, response) => {
     // Get the barber ID from the URL parameters
-    const barberId = request.params.barberId;
+    const barberId = parseInt(request.params.barberId);
 
     // Get barberCollectionObj
     const barberCollectionObj = request.app.get("barberCollectionObj");
 
     // Find the barber with the specified barber ID
     let barber = await barberCollectionObj.findOne({ barberId });
-    // console.log(barber)
     if (!barber) {
       // If the barber is not found, return an error response
       response.status(404).send({ message: "barber not found" });
@@ -53,6 +51,8 @@ barberApp.post("/register",
         const barberCollectionObj = request.app.get("barberCollectionObj")
         //get newbarber from request
         const newbarber = request.body
+
+        newBarber.barberId = parseInt(newBarber.barberId);
 
         //check for duplicate barber by barbername
         let barberOfDB = await barberCollectionObj.findOne({ barbername: newbarber.barbername })

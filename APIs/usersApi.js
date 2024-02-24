@@ -48,7 +48,6 @@ userApp.post("/register",
         //if user not existed
         else {
 
-
             //add CDN link of cloudinary image to user boj
             // newUser.Image = request.file.path;
 
@@ -60,6 +59,7 @@ userApp.post("/register",
             //insert user
 
             await userCollectionObj.insertOne(newUser)
+            // console.log(newUser)
             //send response
             response.status(201).send({ message: "User created" })
         }

@@ -48,7 +48,6 @@ export const fetchAppointments = (userId) => {
   return async (dispatch) => {
     dispatch(fetchAppointmentsRequest());
     try {
-      // Fetch appointments from your backend API
       const response = await axios.get(`http://localhost:4000/appointment-api/fetch-appointments/${userId}`);
       dispatch(fetchAppointmentsSuccess(response.data.payload));
     } catch (error) {

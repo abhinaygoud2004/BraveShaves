@@ -39,18 +39,20 @@ appointmentApp.post(
       );
 
       await barberCollectionObj.updateOne(
-        { barberId },
-        {
-          $push: {
-            appointments: {
-              user_id: userId,
-              appointment_date: appointmentDate,
-              status: "pending",
-              services:["Haircutting"]
-            },
-          },
-        }
-      );
+  { barberId },
+  {
+    $push: {
+      appointments: {
+        user_id: userId,
+        appointment_date: appointmentDate,
+        status: "pending",
+        services: selectedServices,
+      },
+    },
+    $addToSet: { reservedTimes: appointmentDate }, // Add the appointment date to reservedTimes
+  },
+  { upsert: true } // Create a new document if no matching document is found
+);
 
       response.status(201).send({ message: "Appointment booked successfully" });
     } catch (error) {

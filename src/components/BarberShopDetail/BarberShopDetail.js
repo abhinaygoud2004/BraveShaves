@@ -1,11 +1,14 @@
 // BarberShopDetail.js
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import DateTimePicker from '../DateTimePicker/DateTimePicker';
 
 const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+
 
   const handleServiceSelect = (service) => {
     // Check if the service is already selected, and toggle its selection accordingly.
@@ -17,17 +20,20 @@ const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
     setSelectedServices([...selectedServices, service]);
   };
 
+
   const handleTimeSelect = (selectedTime) => {
-    // Pass the selected services and time to a parent component for availability checking.
-    onTimeSlotSelect(selectedServices, selectedTime,barberShop.barberId);
+    // Prevent event propagation
+    // event.stopPropagation();
+  
+    // Pass the selected services and time to the parent component for availability checking.
+    onTimeSlotSelect(selectedServices, selectedTime, barberShop.barberId);
     setSelectedTime(selectedTime);
     // Close the time picker after selecting a time.
     // setShowTimePicker(false);
   };
-
   return (
     <div>
-      <h2>{barberShop.name}</h2>
+      <h2>{barberShop.barberName}</h2>
       <p>Location: {barberShop.location}</p>
       <p>Contact: {barberShop.contact}</p>
 
@@ -37,10 +43,10 @@ const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
           listStyleType: 'none',
           paddingLeft: 0,
           maxHeight: '200px', // Set a maximum height for the list
-          overflowY: barberShop.services.length > 5 ? 'scroll' : 'auto', // Add scrollbar if there are more than 5 services
+          overflowY: barberShop.services[0].length > 5 ? 'scroll' : 'auto', // Add scrollbar if there are more than 5 services
         }}
       >
-        {barberShop.services.map((service, index) => (
+        {barberShop?.services[0]?.map((service, index) => (
           <li key={index} style={{ marginBottom: '10px' }}>
             <label style={{ display: 'flex', alignItems: 'center' }}>
               <input
@@ -62,9 +68,11 @@ const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
           </button>
           {showTimePicker && (
             <DateTimePicker
+            barberId={barberShop.barberId}
               onTimeSelect={handleTimeSelect}
-              onCancel={() => setShowTimePicker(false)}
-            />
+            onCancel={() => setShowTimePicker(false)}
+          />
+          
           )}
         </div>
       )}

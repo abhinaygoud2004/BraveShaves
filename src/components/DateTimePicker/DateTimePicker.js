@@ -1,31 +1,40 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getBarberData } from '../../redux/actions/barberAction';
 
 function DateTimePicker(props) {
-  // const [hours,setHours]=useState();
-  // const [minutes,setMinutes]=useState();
-  const [startDate, setStartDate] = useState(
-   new Date()
-  );
-  // useEffect(()=>{
-  //   props.onTimeSelect(startDate)
-  // },[])
+  const dispatch = useDispatch();
+  const barberData = useSelector((state) => state.barber.barberData);
+  const [startDate, setStartDate] = useState(new Date());
+  const [reservedTimes, setReservedTimes] = useState([]);
+
+  useEffect(() => {
+    dispatch(getBarberData(props.barberId));
+  }, [ props.barberId]);
+
+  // Update the reserved times when the barberData changes
+  useEffect(() => {
+    if (barberData && barberData.reservedTimes) {
+      setReservedTimes(barberData.reservedTimes);
+    }
+  }, [barberData]);
+
   const filterPassedTime = (time) => {
     const currentDate = new Date();
     const startDate = new Date(time);
-    const reservedTimes = [
-      new Date('2023-11-10T10:00:00'), // Example: November 10, 2023, 10:00 AM
-      new Date('2023-11-10T23:30:00'), // Example: November 10, 2023, 2:30 PM
-    ];
-
+  
+    // Convert reserved times strings to Date objects
+    const reservedTimes = barberData?.reservedTimes.map((reservedTime) => new Date(reservedTime));
+  
     // Block if the selected time is in the reservedTimes array
-    if (reservedTimes.some((reservedTime) => reservedTime.getTime() === startDate.getTime())) {
+    if (reservedTimes?.some((reservedTime) => reservedTime.getTime() === startDate.getTime())) {
       return false;
     }
     return currentDate.getTime() < startDate.getTime();
   };
+  
+
   const filterPassedDate = (time) => {
     const currentDate = new Date();
     const startDate = new Date(time);
@@ -39,8 +48,7 @@ function DateTimePicker(props) {
   };
 
   return (
-      <DatePicker
-      // shouldCloseOnSelect={false}
+    <DatePicker
       selected={startDate}
       filterDate={filterPassedDate}
       onChange={handleDateChange}
@@ -49,7 +57,7 @@ function DateTimePicker(props) {
       dateFormat="MMMM d, yyyy h:mm aa"
       timeIntervals={15}
     />
-  )
+  );
 }
 
-export default DateTimePicker
+export default DateTimePicker;
