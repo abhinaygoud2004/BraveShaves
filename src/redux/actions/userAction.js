@@ -22,7 +22,7 @@ export const getUserData = (userId) => {
     dispatch(getUserRequest());
 
     try {
-      const response = await axios.get(`http://localhost:4000/user-api/get-user/${userId}`);
+      const response = await axios.get(`/user-api/get-user/${userId}`);
       const user = response.data; // Assuming your API returns user data
       dispatch(getUserSuccess(user));
     } catch (error) {
