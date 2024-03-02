@@ -12,7 +12,7 @@ const appointmentApp=require("./APIs/appointmentBookingApi");
 
 require('dotenv').config()
 //assign port number
-const port=4000
+const port=4000||process.env.PORT;
 
 //execute userApi when path starts with /user-api
 app.use('/user-api',userApp)
