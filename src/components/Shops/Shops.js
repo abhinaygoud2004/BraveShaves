@@ -4,9 +4,11 @@ import BarberShopDetail from '../BarberShopDetail/BarberShopDetail';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { parseISO } from 'date-fns';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { bookAppointment } from '../../redux/actions/bookingActions';
 import { getAllBarbers } from "../../redux/actions/barberAction";
+import { getBarberData } from '../../redux/actions/barberAction';
 
 import './Shops.css';
 
@@ -24,10 +26,17 @@ function Shops() {
   const [showAllShops, setShowAllShops] = useState(false);
   const [barberShops,setBarberShops]=useState([]);
   const [shopsToDisplay,setShopsToDisplay]=useState([])
+  const [reservedTimes,setReservedTimes]=useState([])
 
   useEffect(()=>{
     dispatch(getAllBarbers());
   },[])
+
+  useEffect(() => {
+    if (barberData && barberData.reservedTimes) {
+      setReservedTimes(barberData.reservedTimes);
+    }
+  }, [barberData]);
 
     useEffect(() => {
       if(Array.isArray(barberShops)) setShopsToDisplay(showAllShops ? barberShops : barberShops?.slice(0, Math.min(4, barberShops?.length)));
@@ -62,67 +71,75 @@ function Shops() {
     setIsModalOpen(true);
   };
 
-//   const barberShops = [ {barberId:'1',barberName:"xyz", name: 'Barber Shop 1',rating:4.7, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, ], }, 
-//   {barberId:'2', barberName:"xyz1",name: 'Barber Shop 2',rating:4, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20,time:15 }, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, ], }, 
-//   {barberId:'3', barberName:"xyz2",name: 'Barber Shop 3',rating:4.8, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 ,time:15}, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, ], }, 
-//   {barberId:'4', barberName:"xyz3",name: 'Barber Shop 4',rating:5, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, ], }, 
-//   {barberId:'5', barberName:"xyz4",name: 'Barber Shop 5',rating:3, location: '123 Main St', contact: '555-1234', services: [ { name: 'Haircut', price: 20 ,time:15}, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15,time:15 }, { name: 'Shave', price: 15 ,time:15}, ], }, 
-// ];
-
-  // Function to check the availability of selected services at a given time
-  const checkAvailability = (selectedServices, startTime, barberId) => {
-    const totalTimeNeeded = selectedServices.reduce((total, service) => {
-      return total + service.time;
-    }, 0);
-    const shopSchedule = getShopSchedule(barberId); // Fetch the shop schedule based on the barberId
-  
-    // Check if the calculated end time (totalTimeNeeded + startTime) is within the available time slots
-    const endTime = addMinutes(startTime, totalTimeNeeded);
-  
-    // Iterate through the time slots to check availability
-    for (let currentTime = startTime; currentTime < endTime; currentTime = addMinutes(currentTime, 15)) {
-      if (!shopSchedule[currentTime] || shopSchedule[currentTime].length === 0) {
-        return false; // One or more time slots are not available
-      }
-    }
-  
-    return true; // All time slots within the range are available
-  };
-  const getShopSchedule = (barberId) => {
-    // Find the barber shop based on the provided barberId
-    const barberShop = barberShops?.find((shop) => shop.barberId === barberId);
-    if (barberShop) {
-      const shopSchedule = {};
-      
-      // Iterate through the available services and build the schedule
-      for (const service of barberShop.services) {
-        const { name, time } = service;
-        if (!shopSchedule[time]) {
-          shopSchedule[time] = [];
-        }
-        shopSchedule[time].push(name);
-      }
-      return shopSchedule;
-    } else {
-      // Barber shop with the provided barberId was not found
-      return {};
-    }
-  };
-  const addMinutes = (time, minutes) => {
-    const newTime = new Date(time);
-    newTime.setMinutes(newTime.getMinutes() + minutes);
-    return newTime;
-  };
   const handleTimeSlotSelect = (selectedServices, selectedTime, barberId) => {
     setSelectedServices(selectedServices);
     setSelectedTime(selectedTime.toISOString())
     setSelectedBarberId(barberId)
   };
 
-  const handleBookedSlot=()=>{
-   dispatch(bookAppointment(userId,selectedBarberShop.barberId,selectedTime,selectedServices));
-   handleCloseModal();
-  }
+ 
+
+  const checkContinuousTime = (selectedStartTime, selectedServices) => {
+    // Parse the selectedStartTime into a JavaScript Date object
+    const startTime = new Date(selectedStartTime);
+  
+    // Check if startTime is a valid date
+    if (isNaN(startTime.getTime())) {
+      console.error('Invalid Date:', selectedStartTime);
+      return false;
+    }
+  
+    // Calculate the end time based on the total duration of selected services
+    let endTime = new Date(startTime);
+    
+    const totalDuration = selectedServices.reduce((total, service) => total + 15, 0);
+    console.log(totalDuration)
+    endTime.setMinutes(endTime.getMinutes() + totalDuration);
+    for (let i = new Date(startTime); i < endTime; i.setMinutes(i.getMinutes() + 15)) {
+      console.log('Checking:', i);
+    
+      // Check if the entire time slot is available
+      const isAvailable = !(reservedTimes || []).some((reservedTime) => {
+        const startReservedTime = new Date(reservedTime);
+        const endReservedTime = new Date(startReservedTime.getTime() + 15 * 60000);
+    
+        // Check if there's any overlap with the reserved time
+        return i < endReservedTime && endReservedTime > i;
+      });
+    
+      if (!isAvailable) {
+        console.log('Reservation Found:', i);
+        return false; // There's a reservation within the selected time slot
+      }
+    }
+    
+    console.log('No reservation found within the selected time slot');
+    return true; // The entire time slot is available
+    
+  };
+  
+  
+  
+  
+  const handleBookedSlot = () => {
+    // Calculate the total cost of selected services
+    const totalCost = selectedServices.reduce((acc, service) => acc + service.price, 0);
+  
+    // Check if there is a continuous time slot
+    const isContinuousTime = checkContinuousTime(selectedTime, selectedServices);
+  
+    if (isContinuousTime) {
+      // Display the total cost
+      console.log(`Total Cost: $${totalCost}`);
+      // Dispatch the booking action
+      dispatch(bookAppointment(userId, selectedBarberShop.barberId, selectedTime, selectedServices));
+      // Close the modal
+      handleCloseModal();
+    } else {
+      // If there is no continuous time, you can display an error message or handle it as needed
+      console.log("Selected services require a continuous time slot.");
+    }
+  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);

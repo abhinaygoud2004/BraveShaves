@@ -33,8 +33,6 @@ function MyProfile() {
 
   useEffect(() => {
     const currentDateTime = new Date();
-
-    // Filter pending bookings with a booked date less than the current date
     const missed = appointments?.filter(
       (booking) =>
         booking.status === "pending" &&
@@ -78,7 +76,7 @@ function MyProfile() {
       {upcomingBookings?.length > 0 ? (
         <ul className="list-group">
           {upcomingBookings?.map((booking) => (
-            <li key={booking?.id} className="list-group-item">
+            <li key={booking?.barber_id} className="list-group-item">
               <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
               <h6>Services:</h6>
               <ul>
@@ -100,7 +98,7 @@ function MyProfile() {
       {missedBookings?.length > 0 ? (
         <ul className="list-group">
           {missedBookings?.map((booking) => (
-            <li key={booking?.id} className="list-group-item">
+            <li key={booking?.barber_id} className="list-group-item">
               <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
               <h6>Services:</h6>
               <ul>
@@ -122,7 +120,7 @@ function MyProfile() {
       {previousBookings?.length > 0 ? (
         <ul className="list-group">
           {previousBookings?.map((booking) => (
-            <li key={booking.id} className="list-group-item">
+            <li key={booking.barber_id} className="list-group-item">
               <h6>Services:</h6>
               <ul>
                 {booking.services?.map((service, index) => (

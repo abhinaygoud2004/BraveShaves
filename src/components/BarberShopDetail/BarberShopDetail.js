@@ -12,13 +12,13 @@ const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
 
   const handleServiceSelect = (service) => {
     // Check if the service is already selected, and toggle its selection accordingly.
-    // if (selectedServices.includes(service)) {
-    //   setSelectedServices(selectedServices.filter((s) => s !== service));
-    // } else {
-    //   setSelectedServices([...selectedServices, service]);
-    // }
-    setSelectedServices([...selectedServices, service]);
+    if (selectedServices.includes(service)) {
+      setSelectedServices(selectedServices.filter((s) => s !== service));
+    } else {
+      setSelectedServices([...selectedServices, service]);
+    }
   };
+  
 
 
   const handleTimeSelect = (selectedTime) => {
