@@ -9,10 +9,9 @@ appointmentApp.use(exp.json());
 appointmentApp.post(
   "/book-appointment/:userId",
   expressAsyncHandler(async (request, response) => {
-    const { barberId, selectedTime,selectedServices } = request.body;
+    const { barberId, selectedTime, selectedServices } = request.body;
 
     try {
-
       // Get the user and barber ID from the decoded token
       const userId = request.params.userId;
 
@@ -20,47 +19,55 @@ appointmentApp.post(
       const userCollectionObj = request.app.get("userCollectionObj");
       const barberCollectionObj = request.app.get("barberCollectionObj");
 
-      // Convert selectedTime,selectedServices to a JavaScript Date object
-      const appointmentDate = new Date(selectedTime);
-
-      // Book the appointment
+      // Convert selectedTime to a JavaScript Date object
+      const baseAppointmentDate = new Date(selectedTime);
       await userCollectionObj.updateOne(
         { userId },
         {
           $push: {
             appointments: {
               barber_id: barberId,
-              appointment_date: selectedTime,
+              appointment_date: baseAppointmentDate,
               status: "pending",
-              services:selectedServices,
+              services: selectedServices,
             },
           },
         }
       );
 
-      await barberCollectionObj.updateOne(
-  { barberId },
-  {
-    $push: {
-      appointments: {
-        user_id: userId,
-        appointment_date: appointmentDate,
-        status: "pending",
-        services: selectedServices,
-      },
-    },
-    $addToSet: { reservedTimes: appointmentDate }, // Add the appointment date to reservedTimes
-  },
-  { upsert: true } // Create a new document if no matching document is found
-);
+      // Book the appointments for each service
+      for (let i = 0; i < selectedServices.length; i++) {
+        const adjustedAppointmentDate = new Date(
+          baseAppointmentDate.getTime() + i * 15 * 60 * 1000
+        );
 
-      response.status(201).send({ message: "Appointment booked successfully" });
+
+        // Book the appointment for the barber
+        await barberCollectionObj.updateOne(
+          { barberId },
+          {
+            $push: {
+              appointments: {
+                user_id: userId,
+                appointment_date: adjustedAppointmentDate,
+                status: "pending",
+                services: selectedServices[i],
+              },
+            },
+            $addToSet: { reservedTimes: adjustedAppointmentDate },
+          },
+          { upsert: true }
+        );
+      }
+
+      response.status(201).send({ message: "Appointments booked successfully" });
     } catch (error) {
       console.error(error);
       response.status(500).send({ message: "Internal server error" });
     }
   })
 );
+
 
 appointmentApp.get(
   "/fetch-appointments/:userId",

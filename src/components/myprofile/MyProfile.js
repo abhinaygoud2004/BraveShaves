@@ -5,6 +5,7 @@ import { getUserData } from "../../redux/actions/userAction";
 import { getAllBarbers } from "../../redux/actions/barberAction";
 import { fetchAppointments } from "../../redux/actions/bookingActions";
 
+
 function MyProfile() {
   const dispatch = useDispatch();
   const appointments = useSelector((state) => state.booking.appointments);
@@ -24,7 +25,6 @@ function MyProfile() {
     }
   };
   
-
   useEffect(() => {
     dispatch(fetchAppointments(userId));
     dispatch(getUserData(userId));
@@ -75,8 +75,8 @@ function MyProfile() {
       <h3 className="mb-2">Upcoming Bookings</h3>
       {upcomingBookings?.length > 0 ? (
         <ul className="list-group">
-          {upcomingBookings?.map((booking) => (
-            <li key={booking?.barber_id} className="list-group-item">
+          {upcomingBookings?.map((booking,index) => (
+            <li key={`${booking?.barber_id}_${index}`} className="list-group-item">
               <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
               <h6>Services:</h6>
               <ul>
@@ -97,8 +97,8 @@ function MyProfile() {
       <h3 className="mb-2">Missed Bookings</h3>
       {missedBookings?.length > 0 ? (
         <ul className="list-group">
-          {missedBookings?.map((booking) => (
-            <li key={booking?.barber_id} className="list-group-item">
+          {missedBookings?.map((booking,index) => (
+            <li key={`${booking?.barber_id}_${index}`}className="list-group-item">
               <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
               <h6>Services:</h6>
               <ul>
@@ -119,15 +119,15 @@ function MyProfile() {
       <h3 className="mb-2">Previous Bookings</h3>
       {previousBookings?.length > 0 ? (
         <ul className="list-group">
-          {previousBookings?.map((booking) => (
-            <li key={booking.barber_id} className="list-group-item">
+          {previousBookings?.map((booking,index) => (
+            <li key={`${booking?.barber_id}_${index}`} className="list-group-item">
               <h6>Services:</h6>
               <ul>
-                {booking.services?.map((service, index) => (
+                {booking?.services?.map((service, index) => (
                   <li key={index}>{service.name}</li>
                 ))}
               </ul>
-              <p>Date: {new Date(booking.appointment_date).toLocaleString()}</p>
+              <p>Date: {new Date(booking?.appointment_date).toLocaleString()}</p>
             </li>
           ))}
         </ul>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Navbar.css";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +14,14 @@ function Navbar() {
     color: "#d3ac5e",
     fontWeight: "semi-bold",
   };
-  const [openCanvas, setOpenCanvas] = useState(false);
+  const [openCanvas, setOpenCanvas] = useState(true);
+  let closeSidebar=()=>{
+    // console.log("EEE")
+    setOpenCanvas(false);
+  }
+  useEffect(()=>{
+    // console.log(openCanvas)
+  },[openCanvas])
   const dispatch = useDispatch();
   return (
     <nav className="navbar navbar-expand-md fixed-top">
@@ -72,13 +79,14 @@ function Navbar() {
             <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
               <li className="nav-item">
                 <NavLink
-                  onClick={() => {}}
+                  onClick={closeSidebar}
                   className="nav-link active "
                   style={({ isActive }) => {
                     return isActive ? activeLink : inActiveLink;
                   }}
                   aria-current="page"
                   to="/"
+                  // data-bs-dismiss="offcanvas" 
                 >
                   Home
                 </NavLink>
@@ -86,7 +94,7 @@ function Navbar() {
               {!isLogin ? (
                 <li className="nav-item">
                   <NavLink
-                    onClick={() => {}}
+                    onClick={closeSidebar}
                     className="nav-link"
                     style={({ isActive }) => {
                       return isActive ? activeLink : inActiveLink;
@@ -104,7 +112,9 @@ function Navbar() {
                       return isActive ? activeLink : inActiveLink;
                     }}
                     to="/"
+                    data-bs-dismiss="offcanvas" 
                     onClick={() => {
+                      closeSidebar();
                       localStorage.clear();
                       dispatch(setIsLogin(false));
                     }}
@@ -116,7 +126,7 @@ function Navbar() {
               {!isLogin && (
                 <li className="nav-item">
                   <NavLink
-                    onClick={() => {}}
+                    onClick={closeSidebar}
                     className="nav-link"
                     style={({ isActive }) => {
                       return isActive ? activeLink : inActiveLink;
@@ -130,12 +140,13 @@ function Navbar() {
               {isLogin && (
                 <li className="nav-item">
                   <NavLink
-                    onClick={() => {}}
+                    onClick={closeSidebar}
                     className="nav-link"
                     style={({ isActive }) => {
                       return isActive ? activeLink : inActiveLink;
                     }}
                     to="/myprofile"
+                    // data-bs-dismiss="offcanvas" 
                   >
                     <svg
                       width="30px"

@@ -25,7 +25,7 @@ function DateTimePicker(props) {
     const startDate = new Date(time);
   
     // Convert reserved times strings to Date objects
-    const reservedTimes = barberData?.reservedTimes.map((reservedTime) => new Date(reservedTime));
+    const reservedTimes = barberData?.reservedTimes?.map((reservedTime) => new Date(reservedTime));
   
     // Block if the selected time is in the reservedTimes array
     if (reservedTimes?.some((reservedTime) => reservedTime.getTime() === startDate.getTime())) {
