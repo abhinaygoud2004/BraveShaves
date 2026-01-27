@@ -1,7 +1,7 @@
 // BarberActions.js
 
 import { BarberTypes } from '../types';
-import axios from 'axios';
+import api from '../../api/axios';
 
 // Action creators
 export const getBarberRequest = () => ({
@@ -24,7 +24,7 @@ export const getBarberData = (barberId) => {
     dispatch(getBarberRequest());
 
     try {
-      const response = await axios.get(`/barber-api/get-barber/${barberId}`);
+      const response = await api.get(`/barber-api/get-barber/${barberId}`);
       const barber = response.data; // Assuming your API returns barber data
       dispatch(getBarberSuccess(barber));
     } catch (error) {
@@ -39,7 +39,7 @@ export const getAllBarbers = () => {
     dispatch(getBarberRequest());
 
     try {
-      const response = await axios.get('/barber-api/get-allBarbers');
+      const response = await api.get('/barber-api/get-allBarbers');
       const barbers = response.data; // Assuming your API returns an array of barbers
       dispatch(getBarberSuccess(barbers));
     } catch (error) {

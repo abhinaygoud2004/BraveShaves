@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from '../../api/axios';
 import { BookingTypes } from '../types';
 
 // Action Creators
@@ -35,7 +35,7 @@ export const bookAppointment = (userId,barberId, selectedTime,selectedServices) 
     dispatch(bookAppointmentRequest());
     try {
       // Perform the booking request to your backend API
-      await axios.post(`/appointment-api/book-appointment/${userId}`, { barberId, selectedTime ,selectedServices});
+      await api.post(`/appointment-api/book-appointment/${userId}`, { barberId, selectedTime ,selectedServices});
       dispatch(bookAppointmentSuccess());
       dispatch(fetchAppointments(userId)); // After booking, fetch updated appointments
     } catch (error) {
@@ -48,7 +48,7 @@ export const fetchAppointments = (userId) => {
   return async (dispatch) => {
     dispatch(fetchAppointmentsRequest());
     try {
-      const response = await axios.get(`/appointment-api/fetch-appointments/${userId}`);
+      const response = await api.get(`/appointment-api/fetch-appointments/${userId}`);
       dispatch(fetchAppointmentsSuccess(response.data.payload));
     } catch (error) {
       dispatch(fetchAppointmentsFailure(error.message));

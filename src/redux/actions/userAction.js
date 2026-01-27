@@ -1,5 +1,5 @@
 import {UserTypes} from '../types'
-import axios from 'axios';
+import api from '../../api/axios';
 
 // Action creators
 export const getUserRequest = () => ({
@@ -22,7 +22,7 @@ export const getUserData = (userId) => {
     dispatch(getUserRequest());
 
     try {
-      const response = await axios.get(`/user-api/get-user/${userId}`);
+      const response = await api.get(`/user-api/get-user/${userId}`);
       const user = response.data; // Assuming your API returns user data
       dispatch(getUserSuccess(user));
     } catch (error) {

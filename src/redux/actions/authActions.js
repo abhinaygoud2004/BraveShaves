@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from "../../api/axios";
 import {AuthTypes} from '../types'
 
 // Action creators
@@ -42,7 +42,7 @@ export const login = (credentials) => {
     dispatch(loginRequest());
 
     try {
-      const response = await axios.post('/user-api/login', credentials);
+      const response = await api.post('/user-api/login', credentials);
       const userId = response.data.userId;
       if(response.data.message==="success"){
         dispatch(setIsLogin(true))
@@ -61,7 +61,7 @@ export const signup = (userData) => {
     dispatch(signupRequest());
 
     try {
-      const response = await axios.post('/user-api/register', userData,{
+      const response = await api.post('/user-api/register', userData,{
         headers: {
           'Content-Type': 'application/json', // Set the content type to JSON
         },});
