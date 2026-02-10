@@ -24,8 +24,9 @@ export const getBarberData = (barberId) => {
     dispatch(getBarberRequest());
 
     try {
-      const response = await api.get(`/barber-api/get-barber/${barberId}`);
+      const response = await api.get(`/barber-api/barber/${barberId}`);
       const barber = response.data; // Assuming your API returns barber data
+      console.log(barber)
       dispatch(getBarberSuccess(barber));
     } catch (error) {
       dispatch(getBarberFailure(error.message));

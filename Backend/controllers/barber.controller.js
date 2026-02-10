@@ -1,40 +1,27 @@
-const service = require("../services/barber.service");
+const barberService = require("../services/barber.service");
 
-exports.registerBarber = async (req, res, next) => {
+exports.create = async (req, res, next) => {
   try {
-    await service.registerBarber(req.body);
-    res.status(201).send({ message: "Barber registered successfully" });
+    const barber = await barberService.create(req.body);
+    res.status(201).json(barber);
   } catch (err) {
     next(err);
   }
 };
 
-exports.loginBarber = async (req, res, next) => {
+exports.list = async (req, res, next) => {
   try {
-    const data = await service.loginBarber(req.body);
-    res.send(data);
+    const barbers = await barberService.list();
+    res.json(barbers);
   } catch (err) {
     next(err);
   }
 };
 
-exports.getAllBarbers = async (req, res, next) => {
+exports.getById = async (req, res, next) => {
   try {
-    const barbers = await service.getAllBarbers();
-    console.log("barber keys:", Object.keys(barbers[0]));
-
-    res.send(barbers);
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getBarberById = async (req, res, next) => {
-  try {
-    const barber = await service.getBarberById(req.params.barberId);
-    console.log("🚨 getBarberById HIT:", req.params.barberId);
-
-    res.send(barber);
+    const barber = await barberService.getById(req.params.id);
+    res.json(barber);
   } catch (err) {
     next(err);
   }

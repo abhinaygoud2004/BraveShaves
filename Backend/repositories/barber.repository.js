@@ -1,15 +1,22 @@
-const { getDB } = require("../config/db");
+const db = require("../config/db");
 
-const collection = () => getDB().collection("barbers");
+exports.create = async ({ user_id, experience_years }) => {
+  const [r] = await db.query(
+    "INSERT INTO barbers (user_id,experience_years) VALUES (?,?)",
+    [user_id, experience_years]
+  );
+  return { id: r.insertId, user_id, experience_years };
+};
 
-exports.findByUsername = (username) =>
-  collection().findOne({ username });
+exports.findAll = async () => {
+  const [rows] = await db.query("SELECT * FROM barbers");
+  return rows;
+};
 
-exports.findById = (barberId) =>
-  collection().findOne({ barberId });
-
-exports.findAll = () =>
-  collection().find().toArray();
-
-exports.create = (barber) =>
-  collection().insertOne(barber);
+exports.findById = async (id) => {
+  const [[row]] = await db.query(
+    "SELECT * FROM barbers WHERE id=?",
+    [id]
+  );
+  return row;
+};

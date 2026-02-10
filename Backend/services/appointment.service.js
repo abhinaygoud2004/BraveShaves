@@ -1,20 +1,48 @@
+const db = require("../config/db");
 const repo = require("../repositories/appointment.repository");
 
-exports.bookAppointment = async (appointment) => {
-  appointment.status = "Pending";
-  appointment.createdAt = new Date();
-  await repo.create(appointment);
+exports.create = async (
+  userId,
+  barberId,
+  services,
+  startTime
+) => {
+  const duration = services.length * 15;
+  const endTime = new Date(new Date(startTime).getTime() + duration * 60000);
+
+  const overlap = await repo.overlap(barberId, startTime, endTime);
+  if (overlap) throw new Error("Slot unavailable");
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const apptId = await repo.create(
+      { userId, barberId, startTime, endTime },
+      conn
+    );
+
+    await repo.attachServices(apptId, services, conn);
+
+    await conn.commit();
+    return apptId;
+  } catch (e) {
+    await conn.rollback();
+    throw e;
+  } finally {
+    conn.release();
+  }
 };
 
-exports.getUserAppointments = async (userId) => {
-  return await repo.findByUserId(userId);
+
+exports.getByUser = async (userId) => {
+  return appointmentRepo.findByUser(userId);
 };
 
-exports.getBarberAppointments = async (barberId) => {
-  return await repo.findByBarberId(barberId);
+exports.getByBarber = async (barberId) => {
+  return appointmentRepo.findByBarber(barberId);
 };
 
-exports.updateStatus = async (appointmentId, status) => {
-  const updated = await repo.updateStatus(appointmentId, status);
-  if (!updated.matchedCount) throw new Error("Appointment not found");
+exports.cancel = async (appointmentId) => {
+  await appointmentRepo.cancel(appointmentId);
 };

@@ -8,7 +8,7 @@ export const getUserRequest = () => ({
 
 export const getUserSuccess = (user) => ({
   type: UserTypes.ACTION.GET_USER_SUCCESS,
-  payload: user.payload,
+  payload: user,
 });
 
 export const getUserFailure = (error) => ({
@@ -22,7 +22,7 @@ export const getUserData = (userId) => {
     dispatch(getUserRequest());
 
     try {
-      const response = await api.get(`/user-api/get-user/${userId}`);
+      const response = await api.get(`/user-api/user/${userId}`);
       const user = response.data; // Assuming your API returns user data
       dispatch(getUserSuccess(user));
     } catch (error) {

@@ -1,29 +1,32 @@
 const repo = require("../repositories/user.repository");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const {hashPassword,comparePassword}=require("../utils/password.utils")
+const {signToken}=require("../utils/jwt.util");
 
-exports.registerUser = async (user) => {
-  const existing = await repo.findByUsername(user.username);
+
+
+exports.register = async (user) => {
+  const existing = await repo.findByEmail(user.email);
   if (existing) throw new Error("User already exists");
 
-  user.password = await bcrypt.hash(user.password, 5);
+  const hashed=await hashPassword(user.password);
+  user.password=hashed;
   await repo.create(user);
 };
 
-exports.loginUser = async ({ username, password }) => {
-  const user = await repo.findByUsername(username);
-  if (!user) throw new Error("Invalid username");
+exports.login = async ({ email, password }) => {
+  const user = await repo.findByEmail(email);
+  if (!user) throw new Error("Invalid email");
 
-  const isValid = await bcrypt.compare(password, user.password);
+  const isValid = await comparePassword(password, user.password_hash);
   if (!isValid) throw new Error("Invalid password");
 
-  const token = jwt.sign({ username }, process.env.SECRET_KEY, { expiresIn: "1d" });
-  delete user.password;
-
-  return { message: "success", token, userId: user.userId };
+  return{
+    token:signToken({id:user.id,role:user.role}),
+    user
+  }
 };
 
-exports.getUser = async (userId) => {
+exports.user = async (userId) => {
   const user = await repo.findById(userId);
   if (!user) throw new Error("User not found");
   return user;

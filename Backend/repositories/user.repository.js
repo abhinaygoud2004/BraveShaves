@@ -1,12 +1,26 @@
-const { getDB } = require("../config/db");
+const db  = require("../config/db");
 
-const collection = () => getDB().collection("users");
+exports.create=async(user)=>{
+  const [res]=await db.query(
+    "INSERT INTO users (name,email,phone,password_hash,role) VALUES (?,?,?,?,?)",
+    [user.name,user.email,user.phone,user.password,user.role]
+  );
+  return {res};
+};
 
-exports.findByUsername = (username) =>
-  collection().findOne({ username });
+exports.findByEmail=async(email)=>{
+  const [[row]]=await db.query(
+    "SELECT * FROM users where email=?",
+    [email]
+  );
+  return row;
+};
 
-exports.findById = (userId) =>
-  collection().findOne({ userId });
-
-exports.create = (user) =>
-  collection().insertOne(user);
+exports.findById = async (id) => {
+  console.log(id)
+  const [[row]] = await db.query(
+    "SELECT * FROM users WHERE id=?",
+    [id]
+  );
+  return row;
+};

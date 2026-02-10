@@ -26,10 +26,13 @@ function MyProfile() {
   };
   
   useEffect(() => {
-    dispatch(fetchAppointments(userId));
-    dispatch(getUserData(userId));
-    dispatch(getAllBarbers());
-  }, [barberData]);
+    if (userId) {
+      dispatch(fetchAppointments(userId));
+      dispatch(getUserData(userId));
+      dispatch(getAllBarbers());
+    }
+  }, [dispatch, userId]);
+  
 
   useEffect(() => {
     const currentDateTime = new Date();

@@ -1,14 +1,11 @@
 const express = require("express");
-const controller = require("../controllers/user.controller");
-const verifyToken = require("../middlewares/verifyToken");
-
 const router = express.Router();
 
-router.post("/register", controller.registerUser);
-router.post("/login", controller.loginUser);
-router.get("/get-user/:userId", verifyToken, controller.getUser);
-router.get("/ping", (req, res) => {
-    res.send("User API working ✅");
-  });
+const userController = require("../controllers/user.controller");
+const userMiddleware = require("../middlewares/auth.middleware");
+
+router.post("/register", userController.register);
+router.post("/login", userController.login);
+router.get("/me", userMiddleware, userController.user);
 
 module.exports = router;

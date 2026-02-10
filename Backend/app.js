@@ -1,51 +1,33 @@
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
 
-const userRoutes = require("./routes/user.routes");
-const barberRoutes = require("./routes/barber.routes");
-const appointmentRoutes = require("./routes/appointment.routes");
-
-const { connectDB } = require("./config/db");
-const errorHandler = require("./middlewares/error.middleware");
-const notFound = require("./middlewares/notFound.middleware");
-
-require("dotenv").config();
+const errorMiddleware = require("./middlewares/error.middleware");
+const authMiddleware = require("./middlewares/auth.middleware");
 
 const app = express();
 
-/* ✅ CORS: allow React dev server */
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
-/* ✅ Handle browser preflight requests */
-app.options("*", cors());
-
+app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
 
-// 🔎 Debug: log all requests
-app.use((req, res, next) => {
-  console.log("➡️", req.method, req.url);
-  next();
-});
+/**
+ * PUBLIC ROUTES (NO AUTH)
+ */
+app.use("/api/user",require("./routes/user.routes"));
 
-// ✅ DB connection
-connectDB();
+/**
+ * PROTECTED ROUTES (AUTH REQUIRED)
+ */
+app.use("/api/barbers", authMiddleware, require("./routes/barber.routes"));
+app.use("/api/shops", authMiddleware, require("./routes/shop.routes"));
+app.use("/api/services", authMiddleware, require("./routes/service.routes"));
+app.use("/api/appointments", authMiddleware, require("./routes/appointment.routes"));
+app.use("/api/payments", authMiddleware, require("./routes/payment.routes"));
 
-// ✅ API routes
-app.use("/user-api", userRoutes);
-app.use("/barber-api", barberRoutes);
-app.use("/appointment-api", appointmentRoutes);
-
-// ❌ React build disabled in development
-
-// ❌ NOT FOUND & ERROR HANDLERS MUST BE LAST
-app.use(notFound);
-app.use(errorHandler);
+/**
+ * ERROR HANDLER (ALWAYS LAST)
+ */
+app.use(errorMiddleware);
 
 module.exports = app;

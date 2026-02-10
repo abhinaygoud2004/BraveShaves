@@ -1,30 +1,32 @@
 const service = require("../services/user.service");
 
-exports.registerUser = async (req, res, next) => {
-  try {
-    await service.registerUser(req.body);
-    console.log("📥 Controller hit");
-    // console.log("📦 Body:", req.body);
-    res.status(201).send({ message: "User created" });
-  } catch (err) {
-    next(err);
-  }
-};
 
-exports.loginUser = async (req, res, next) => {
+exports.register = async (req, res, next) => {
   try {
-    const data = await service.loginUser(req.body);
-    res.send(data);
+    const user=await service.register(req.body);
+    res.status(201).json(user);
   } catch (err) {
     next(err);
   }
 };
 
 
-exports.getUser = async (req, res, next) => {
+
+exports.login = async (req,res,next) => {
+  try{
+    const user=await service.login(req.body);
+    res.json(user);
+  }
+  catch(error){
+    next(error);
+  }
+};
+
+
+exports.user = async (req, res,next) => {
   try {
-    const user = await service.getUser(req.params.userId);
-    res.send(user);
+    const user = await service.user(req.user.id);
+    res.json(user);
   } catch (err) {
     next(err);
   }

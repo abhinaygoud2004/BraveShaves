@@ -1,12 +1,16 @@
 const express = require("express");
-const controller = require("../controllers/barber.controller");
-const verifyToken = require("../middlewares/verifyToken");
-
 const router = express.Router();
 
-router.post("/register", controller.registerBarber);
-router.post("/login", controller.loginBarber);
-router.get("/get-allBarbers", verifyToken, controller.getAllBarbers);
-router.get("/:barberId", verifyToken, controller.getBarberById);
+const barberController = require("../controllers/barber.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
+
+// Create barber profile (usually after user signup)
+router.post("/", authMiddleware, barberController.create);
+
+// Get all barbers (for shop listing)
+router.get("/", barberController.list);
+
+// Get barber by id
+router.get("/:id", barberController.getById);
 
 module.exports = router;
