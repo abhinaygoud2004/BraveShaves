@@ -43,18 +43,38 @@ export const login = (credentials) => {
 
     try {
       const response = await api.post('/user-api/login', credentials);
-      const userId = response.data.userId;
-      if(response.data.message==="success"){
-        dispatch(setIsLogin(true))
-        dispatch(loginSuccess(userId));
-        localStorage.setItem("token",response.data.token)
-        localStorage.setItem("userId",response.data.userId)
+
+      if (response.data.message === "success") {
+        dispatch(setIsLogin(true));
+        dispatch(loginSuccess(response.data.userId));
+
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userId);
+      } else {
+        dispatch(loginFailure(response.data.message));
       }
+
     } catch (error) {
-      dispatch(loginFailure(error.message));
+      // Axios error handling
+      if (error.response) {
+        // Backend sent error response
+        console.error("Login API Error:", error.response.data);
+        console.error("Status Code:", error.response.status);
+
+        dispatch(loginFailure(error.response.data.message || "Login failed"));
+      } else if (error.request) {
+        // Request sent but no response
+        console.error("No response from server:", error.request);
+        dispatch(loginFailure("Server not responding"));
+      } else {
+        // Something else went wrong
+        console.error("Unexpected Error:", error.message);
+        dispatch(loginFailure(error.message));
+      }
     }
   };
 };
+
 
 export const signup = (userData) => {
   return async (dispatch) => {

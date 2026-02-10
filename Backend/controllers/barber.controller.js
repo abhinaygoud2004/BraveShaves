@@ -21,6 +21,8 @@ exports.loginBarber = async (req, res, next) => {
 exports.getAllBarbers = async (req, res, next) => {
   try {
     const barbers = await service.getAllBarbers();
+    console.log("barber keys:", Object.keys(barbers[0]));
+
     res.send(barbers);
   } catch (err) {
     next(err);
@@ -30,6 +32,8 @@ exports.getAllBarbers = async (req, res, next) => {
 exports.getBarberById = async (req, res, next) => {
   try {
     const barber = await service.getBarberById(req.params.barberId);
+    console.log("🚨 getBarberById HIT:", req.params.barberId);
+
     res.send(barber);
   } catch (err) {
     next(err);

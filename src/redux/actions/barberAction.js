@@ -10,7 +10,7 @@ export const getBarberRequest = () => ({
 
 export const getBarberSuccess = (barber) => ({
   type: BarberTypes.ACTION.GET_BARBER_SUCCESS,
-  payload: barber.payload,
+  payload: barber,
 });
 
 export const getBarberFailure = (error) => ({
@@ -41,6 +41,7 @@ export const getAllBarbers = () => {
     try {
       const response = await api.get('/barber-api/get-allBarbers');
       const barbers = response.data; // Assuming your API returns an array of barbers
+      // console.log(barbers)
       dispatch(getBarberSuccess(barbers));
     } catch (error) {
       dispatch(getBarberFailure(error.message));

@@ -26,9 +26,14 @@ function Shops() {
   const [barberShops, setBarberShops] = useState([]);
   const [shopsToDisplay, setShopsToDisplay] = useState([]);
   const [reservedTimes, setReservedTimes] = useState([]);
+  const fullState = useSelector((state) => state);
 
+useEffect(() => {
+  console.log("FULL REDUX STATE:", fullState);
+}, [fullState]);
   useEffect(() => {
     dispatch(getAllBarbers());
+    console.log(barberData)
   }, []);
 
   useEffect(() => {
@@ -42,8 +47,16 @@ function Shops() {
   }, [barberShops, showAllShops]);
 
   useEffect(() => {
-    setBarberShops(barberData);
-  }, [barberData])
+    console.log("FINAL barberData:", barberData);
+  }, [barberData]);
+  
+
+  useEffect(() => {
+    if (Array.isArray(barberData)) {
+      setBarberShops(barberData);
+    }
+  }, [barberData]);
+  
 
   let generateStarRating = (rating) => {
     const maxRating = 5;
