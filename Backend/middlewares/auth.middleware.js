@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
     // 🔐 Attach user info to request
     req.user = decoded;
 
-    console.log("🔐 JWT decoded:", decoded);
+    // console.log("🔐 JWT decoded:", decoded);
 
     next();
   } catch (err) {

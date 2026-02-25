@@ -12,6 +12,7 @@ exports.create = async (req, res, next) => {
 exports.list = async (req, res, next) => {
   try {
     const barbers = await barberService.list();
+    console.log("in controller"+barbers)
     res.json(barbers);
   } catch (err) {
     next(err);

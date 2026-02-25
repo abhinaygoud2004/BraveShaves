@@ -2,6 +2,7 @@ const appointmentService = require("../services/appointment.service");
 
 exports.create = async (req, res, next) => {
   try {
+    console.log("services: ",req.body)
     const appointmentId = await appointmentService.create({
       user_id: req.user.id,
       ...req.body,

@@ -10,6 +10,7 @@ exports.list = async () => {
 
 exports.getById = async (id) => {
   const barber = await barberRepo.findById(id);
+  console.log("in service",barber)
   if (!barber) throw new Error("Barber not found");
   return barber;
 };

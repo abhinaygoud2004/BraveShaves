@@ -2,20 +2,33 @@ const db = require("../config/db");
 
 exports.overlap = async (barberId, start, end) => {
   const [[r]] = await db.query(
-    `SELECT COUNT(*) cnt FROM appointments
-     WHERE barber_id=? AND status!='CANCELLED'
-     AND start_time < ? AND end_time > ?`,
+    `SELECT COUNT(*) cnt 
+     FROM appointments
+     WHERE barber_id = ?
+     AND status IN ('PENDING','CONFIRMED')
+     AND start_time < ?
+     AND end_time > ?`,
     [barberId, end, start]
   );
+
   return r.cnt > 0;
 };
 
 exports.create = async (data, conn) => {
   const [r] = await conn.query(
-    `INSERT INTO appointments (user_id,barber_id,start_time,end_time)
-     VALUES (?,?,?,?)`,
-    [data.user_id, data.barber_id, data.start_time, data.end_time]
+    `INSERT INTO appointments 
+     (user_id, barber_id, start_time, end_time, payment_status, status)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      data.user_id,
+      data.barber_id,
+      data.start_time,
+      data.end_time,
+      data.payment_status || "PENDING",
+      data.status || "PENDING",
+    ]
   );
+
   return r.insertId;
 };
 
@@ -30,9 +43,17 @@ exports.attachServices = async (appointmentId, services, conn) => {
 
 exports.findByUser = async (userId) => {
   const [rows] = await db.query(
-    "SELECT * FROM appointments WHERE user_id=?",
+    `
+    SELECT a.*, s.id as service_id, s.name as service_name
+    FROM appointments a
+    LEFT JOIN appointment_services aps ON a.id = aps.appointment_id
+    LEFT JOIN services s ON aps.service_id = s.id
+    WHERE a.user_id = ?
+    ORDER BY a.start_time DESC
+    `,
     [userId]
   );
+
   return rows;
 };
 
@@ -46,11 +67,13 @@ exports.findByBarber = async (barberId) => {
 
 exports.cancel = async (id) => {
   await db.query(
-    "UPDATE appointments SET status='CANCELLED' WHERE id=?",
+    `UPDATE appointments 
+     SET status='CANCELLED',
+         payment_status='REFUNDED'
+     WHERE id=?`,
     [id]
   );
 };
-
 
 exports.confirm = async (appointmentId) => {
   const [result] = await db.query(
