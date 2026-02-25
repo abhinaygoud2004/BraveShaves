@@ -1,6 +1,6 @@
 const jwtUtil = require("../utils/jwt.util");
 
-module.exports = (req, res, next) => {
+exports.authenticateUser = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -21,4 +21,15 @@ module.exports = (req, res, next) => {
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
+};
+
+exports.authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: "Access denied: insufficient permissions"
+      });
+    }
+    next();
+  };
 };

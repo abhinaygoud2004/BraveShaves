@@ -5,7 +5,7 @@ const paymentController = require("../controllers/payment.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 
 // Cash payment (pay at shop)
-router.post("/cash", authMiddleware, paymentController.cashPayment);
+router.post("/cash", paymentController.cashPayment);
 
 // (Future)
 // router.post("/create-order", paymentController.createOrder);
