@@ -5,15 +5,15 @@ const appointmentController = require("../controllers/appointment.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 
 // Create appointment (user)
-router.post("/", authMiddleware, appointmentController.create);
+router.post("/", appointmentController.create);
 
 // Get appointments of logged-in user
-router.get("/user", authMiddleware, appointmentController.userAppointments);
+router.get("/user", appointmentController.userAppointments);
 
 // Get appointments for a barber
-router.get("/barber/:barberId", authMiddleware, appointmentController.barberAppointments);
+router.get("/barber/:barberId", appointmentController.barberAppointments);
 
 // Cancel appointment
-router.put("/:id/cancel", authMiddleware, appointmentController.cancel);
+router.put("/:id/cancel", appointmentController.cancel);
 
 module.exports = router;

@@ -1,143 +1,161 @@
-import React, { useState, useEffect } from "react";
+// MyProfile.js
+
+import React, { useEffect, useState } from "react";
 import "./MyProfile.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../redux/actions/userAction";
+import { getUserAppointments } from "../../redux/actions/appointmentActions";
 import { getAllBarbers } from "../../redux/actions/barberAction";
-import { fetchAppointments } from "../../redux/actions/bookingActions";
-
 
 function MyProfile() {
   const dispatch = useDispatch();
-  const appointments = useSelector((state) => state.booking.appointments);
+
+  // ✅ New Redux states
+  const appointmentState = useSelector(
+    (state) => state.appointment
+  );
+
+  const appointments = appointmentState?.appointments || [];
+
+  const userData = useSelector(
+    (state) => state.user?.userData
+  );
+
+  const barberData = useSelector(
+    (state) => state.barber?.barberData
+  );
+
   const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [previousBookings, setPreviousBookings] = useState([]);
   const [missedBookings, setMissedBookings] = useState([]);
-  const userId = useSelector((state) => state.auth.userId);
-  const barberData = useSelector((state) => state.barber.barberData);
 
-  const getBarberNameById = (barberId) => {
-    // Check if barberData is an array
-    if (Array.isArray(barberData)) {
-      const foundBarber = barberData.find((barber) => barber.barberId === barberId);
-      return foundBarber ? foundBarber.barberName : "Unknown Barber";
-    } else {
-      return "Unknown Barber";
-    }
-  };
-  
+  const userId = useSelector(
+    (state) => Number(state.auth?.userId)
+  );
+ 
+  // 🔹 Fetch Data
   useEffect(() => {
     if (userId) {
-      dispatch(fetchAppointments(userId));
-      dispatch(getUserData(userId));
+      dispatch(getUserAppointments());
+      dispatch(getUserData());
       dispatch(getAllBarbers());
     }
   }, [dispatch, userId]);
-  
 
+
+  // 🔹 Categorize Bookings
   useEffect(() => {
-    const currentDateTime = new Date();
-    const missed = appointments?.filter(
-      (booking) =>
-        booking.status === "pending" &&
-        new Date(booking.appointment_date) < currentDateTime
-    );
+    const now = new Date();
 
-    // Filter previous bookings with a booked date less than the current date
-    const previous = appointments?.filter(
-      (booking) =>
-        booking.status === "finished" &&
-        new Date(booking.appointment_date) < currentDateTime
-    );
+    const upcoming = [];
+    const previous = [];
+    const missed = [];
 
-    // Filter upcoming bookings with a booked date greater than or equal to the current date
-    const upcoming = appointments?.filter(
-      (booking) =>
-        booking.status === "pending" &&
-        new Date(booking.appointment_date) >= currentDateTime
-    );
+    appointments.forEach((booking) => {
+      const startTime = new Date(booking.start_time);
 
-    // Set the state variables accordingly
+      if (booking.status === "CONFIRMED" && startTime >= now) {
+        upcoming.push(booking);
+      } else if (
+        booking.status === "CONFIRMED" &&
+        startTime < now
+      ) {
+        missed.push(booking);
+      } else if (booking.status === "COMPLETED") {
+        previous.push(booking);
+      }
+    });
+
     setUpcomingBookings(upcoming);
     setPreviousBookings(previous);
     setMissedBookings(missed);
   }, [appointments]);
 
-  const userData = useSelector((state) => state.user.userData);
+  const barberMap = React.useMemo(() => {
+    if (!Array.isArray(barberData)) return {};
+  
+    return barberData.reduce((acc, barber) => {
+      acc[barber.id] = barber.name; // use barber_id if aliased
+      return acc;
+    }, {});
+  }, [barberData]);
+
 
   return (
     <div className="container head">
       <h2 className="display-5 mb-4">My Profile</h2>
+
+      {/* Personal Info */}
       <div className="mb-4">
         <h3 className="mb-2">Personal Information</h3>
         <div className="card p-3">
-          <p className="mb-2">Name: {userData?.username}</p>
-          <p className="mb-2">Email: {userData?.email}</p>
+          <p>Name: {userData?.name}</p>
+          <p>Email: {userData?.email}</p>
         </div>
       </div>
 
-      <h3 className="mb-2">Upcoming Bookings</h3>
-      {upcomingBookings?.length > 0 ? (
-        <ul className="list-group">
-          {upcomingBookings?.map((booking,index) => (
-            <li key={`${booking?.barber_id}_${index}`} className="list-group-item">
-              <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
-              <h6>Services:</h6>
-              <ul>
-                {booking?.services?.map((service, index) => (
-                  <li key={index}>{service.name}</li>
-                ))}
-              </ul>
-              <p>
-                Date: {new Date(booking?.appointment_date).toLocaleString()}
-              </p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No upcoming bookings found.</p>
-      )}
+      {/* Upcoming */}
+      <BookingSection
+        title="Upcoming Bookings"
+        bookings={upcomingBookings}
+        barberMap={barberMap}
+      />
 
-      <h3 className="mb-2">Missed Bookings</h3>
-      {missedBookings?.length > 0 ? (
-        <ul className="list-group">
-          {missedBookings?.map((booking,index) => (
-            <li key={`${booking?.barber_id}_${index}`}className="list-group-item">
-              <h6>Shop Name:{getBarberNameById(booking.barber_id)}</h6>
-              <h6>Services:</h6>
-              <ul>
-                {booking?.services?.map((service, index) => (
-                  <li key={index}>{service.name}</li>
-                ))}
-              </ul>
-              <p>
-                Date: {new Date(booking?.appointment_date).toLocaleString()}
-              </p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No missed bookings found.</p>
-      )}
+      {/* Missed */}
+      <BookingSection
+        title="Missed Bookings"
+        bookings={missedBookings}
+        barberMap={barberMap}
+      />
 
-      <h3 className="mb-2">Previous Bookings</h3>
-      {previousBookings?.length > 0 ? (
-        <ul className="list-group">
-          {previousBookings?.map((booking,index) => (
-            <li key={`${booking?.barber_id}_${index}`} className="list-group-item">
-              <h6>Services:</h6>
-              <ul>
-                {booking?.services?.map((service, index) => (
-                  <li key={index}>{service.name}</li>
-                ))}
-              </ul>
-              <p>Date: {new Date(booking?.appointment_date).toLocaleString()}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No previous bookings found.</p>
-      )}
+      {/* Previous */}
+      <BookingSection
+        title="Previous Bookings"
+        bookings={previousBookings}
+        barberMap={barberMap}
+      />
     </div>
+  );
+}
+
+// 🔥 Reusable Component
+function BookingSection({ title, bookings ,barberMap}) {
+  return (
+    <>
+      <h3 className="mb-2">{title}</h3>
+      {bookings.length > 0 ? (
+        <ul className="list-group mb-4">
+          {bookings.map((booking) => (
+            <li key={booking.id} className="list-group-item">
+              <h6>
+                Barber: {barberMap[booking.barber_id] || "Unknown Barber"}
+              </h6>
+
+              {/* Services */}
+              <h6>Services:</h6>
+              <ul>
+                {booking.services?.map((service) => (
+                  <li key={service.id}>
+                    {service.name} (₹{service.price})
+                  </li>
+                ))}
+              </ul>
+
+              <p>
+                Date:{" "}
+                {new Date(
+                  booking.start_time
+                ).toLocaleString()}
+              </p>
+
+              <p>Status: {booking.status}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No bookings found.</p>
+      )}
+    </>
   );
 }
 

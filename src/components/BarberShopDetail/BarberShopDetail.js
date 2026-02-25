@@ -1,80 +1,83 @@
 // BarberShopDetail.js
-import React, { useState } from 'react';
-import { useEffect } from 'react';
-import DateTimePicker from '../DateTimePicker/DateTimePicker';
+
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import DateTimePicker from "../DateTimePicker/DateTimePicker";
+import { getServicesByBarber } from "../../redux/actions/serviceActions";
 
 const BarberShopDetail = ({ barberShop, onTimeSlotSelect }) => {
+  const dispatch = useDispatch();
+  const { services, loading } = useSelector(
+    (state) => state.service
+  );
+
+
   const [selectedServices, setSelectedServices] = useState([]);
-  const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-
+  // 🔥 Fetch services for this barber
+  useEffect(() => {
+    if (barberShop?.barber_id) {
+      dispatch(getServicesByBarber(barberShop.barber_id));
+    }
+  }, [barberShop, dispatch]);
 
   const handleServiceSelect = (service) => {
-    // Check if the service is already selected, and toggle its selection accordingly.
-    if (selectedServices.includes(service)) {
-      setSelectedServices(selectedServices.filter((s) => s !== service));
+    const exists = selectedServices.find(
+      (s) => s.id === service.id
+    );
+
+    if (exists) {
+      setSelectedServices(
+        selectedServices.filter((s) => s.id !== service.id)
+      );
     } else {
       setSelectedServices([...selectedServices, service]);
     }
   };
-  
 
-
-  const handleTimeSelect = (selectedTime) => {
-    // Prevent event propagation
-    // event.stopPropagation();
-  
-    // Pass the selected services and time to the parent component for availability checking.
-    onTimeSlotSelect(selectedServices, selectedTime, barberShop.barberId);
-    setSelectedTime(selectedTime);
-    // Close the time picker after selecting a time.
-    // setShowTimePicker(false);
+  const handleTimeSelect = (time) => {
+    onTimeSlotSelect(selectedServices, time, barberShop.barber_id);
   };
+
+  if (loading) return <p>Loading services...</p>;
+
   return (
     <div>
-      <h2>{barberShop.barberName}</h2>
-      <p>Location: {barberShop.location}</p>
-      <p>Contact: {barberShop.contact}</p>
+      <h2>{barberShop.shop_name}</h2>
+      <p>Address: {barberShop.address}</p>
+      <p>
+        Timings: {barberShop.open_time} - {barberShop.close_time}
+      </p>
 
-      <h3>Services Offered:</h3>
-      <ul
-        style={{
-          listStyleType: 'none',
-          paddingLeft: 0,
-          maxHeight: '200px', // Set a maximum height for the list
-          overflowY: barberShop.services[0].length > 5 ? 'scroll' : 'auto', // Add scrollbar if there are more than 5 services
-        }}
-      >
-        {barberShop?.services[0]?.map((service, index) => (
-          <li key={index} style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'flex', alignItems: 'center' }}>
+      <h3>Services:</h3>
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {services?.map((service) => (
+          <li key={service.id} style={{ marginBottom: 10 }}>
+            <label>
               <input
                 type="checkbox"
-                checked={selectedServices.includes(service)}
                 onChange={() => handleServiceSelect(service)}
-                style={{ marginRight: '5px' }}
               />
-              {service.name} - ${service.price}
+              {service.name} - ₹{service.price} (
+              {service.duration_minutes} mins)
             </label>
           </li>
         ))}
       </ul>
 
       {selectedServices.length > 0 && (
-        <div>
-          <button className="button" onClick={() => setShowTimePicker(true)}>
-            Select Time
-          </button>
-          {showTimePicker && (
-            <DateTimePicker
-            barberId={barberShop.barberId}
-              onTimeSelect={handleTimeSelect}
-            onCancel={() => setShowTimePicker(false)}
-          />
-          
-          )}
-        </div>
+        <button onClick={() => setShowTimePicker(true)}>
+          Select Time
+        </button>
+      )}
+
+      {showTimePicker && (
+        <DateTimePicker
+          barberId={barberShop.barber_id}
+          onTimeSelect={handleTimeSelect}
+          onCancel={() => setShowTimePicker(false)}
+        />
       )}
     </div>
   );

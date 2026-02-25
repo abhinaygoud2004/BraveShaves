@@ -10,6 +10,7 @@ import BarberProfile from './BarberProfile/BarberProfile';
 import Shops from './Shops/Shops';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
 import ScrollToTop from './ScrollToTop/ScrollToTop';
+import Payment from './Payment/Payment';
 
 function RootLayout() {
   return (
@@ -30,6 +31,9 @@ function RootLayout() {
           element={<PrivateRoute element={<BarberProfile />} />}
         />
         <Route path="/shops" element={<Shops />} />
+        <Route
+        path="/payment" element={<Payment/>}
+        />
       </Routes>
       <Footer />
     </div>

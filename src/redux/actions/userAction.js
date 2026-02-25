@@ -17,12 +17,12 @@ export const getUserFailure = (error) => ({
 });
 
 // Async action creator to fetch user data by userId
-export const getUserData = (userId) => {
+export const getUserData = () => {
   return async (dispatch) => {
     dispatch(getUserRequest());
 
     try {
-      const response = await api.get(`/user-api/user/${userId}`);
+      const response = await api.get(`/user/me`);
       const user = response.data; // Assuming your API returns user data
       dispatch(getUserSuccess(user));
     } catch (error) {

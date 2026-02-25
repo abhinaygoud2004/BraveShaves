@@ -17,7 +17,6 @@ exports.findByEmail=async(email)=>{
 };
 
 exports.findById = async (id) => {
-  console.log(id)
   const [[row]] = await db.query(
     "SELECT * FROM users WHERE id=?",
     [id]

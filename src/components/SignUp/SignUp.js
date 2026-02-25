@@ -1,5 +1,4 @@
 import './SignUp.css'
-import axios from 'axios'
 import { useState } from 'react'
 import {useForm} from 'react-hook-form'
 import { login, loginRequest, loginSuccess, loginFailure, signup } from '../../redux/actions/authActions';
@@ -33,9 +32,9 @@ function SignUp() {
         {err.length!=0&&<p className="text-center lead display-3 fw-bold text-danger">{err}</p>}
         <form action="" onSubmit={handleSubmit(addUser)} className='signBg border border-0 rounded mt-0  pt-5'>
             <div className="form-floating">
-                <input type="text" name="username" placeholder='hi' id="username" className='form-control mt-3' {...register("username",{required:true})}/>
-                <label htmlFor="username"className='form-label'>Username</label>
-                {errors.username?.type&&<p className='text-danger'>*Username is required</p>}
+                <input type="text" name="name" placeholder='hi' id="name" className='form-control mt-3' {...register("name",{required:true})}/>
+                <label htmlFor="name"className='form-label'>name</label>
+                {errors.name?.type&&<p className='text-danger'>*name is required</p>}
             </div> 
             <div className="form-floating">
                 <input type="email" placeholder='hi' name="email" id="email" className='form-control mt-3' {...register("email",{required:true})}/>
@@ -43,10 +42,26 @@ function SignUp() {
                 {errors.email?.type&&<p className='text-danger'>*Email is required</p>}
             </div>
             <div className="form-floating">
-                <input type="text" name="mobileno" id="mobileno" placeholder='hi' className='form-control mt-3' {...register("mobileno",{required:true})}/>
-                <label htmlFor="mobileno">Mobile number</label>
+                <input type="text" name="phone" id="phone" placeholder='hi' className='form-control mt-3' {...register("mobileno",{required:true})}/>
+                <label htmlFor="phone">Mobile number</label>
                 {errors.mobileno?.type&&<p className='text-danger'>*Mobile no is required</p>}
             </div>
+                            <div className="form-floating">
+                <select
+                    id="role"
+                    className="form-select mt-3"
+                    {...register("role", { required: true })}
+                >
+                    <option value="">Select Role</option>
+                    <option value="user">User</option>
+                    <option value="barber">Barber</option>
+                </select>
+                <label htmlFor="role">Role</label>
+                {errors.role?.type && (
+                    <p className="text-danger">*Role is required</p>
+                )}
+                </div>
+
             <div className="form-floating">
                 <input type="password" placeholder='hi' name="password" id="password" className='form-control mt-3'{...register("password",{required:true})} />
                 <label htmlFor="password">Password</label>

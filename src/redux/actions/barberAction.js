@@ -24,9 +24,8 @@ export const getBarberData = (barberId) => {
     dispatch(getBarberRequest());
 
     try {
-      const response = await api.get(`/barber-api/barber/${barberId}`);
+      const response = await api.get(`/barbers/${barberId}`);
       const barber = response.data; // Assuming your API returns barber data
-      console.log(barber)
       dispatch(getBarberSuccess(barber));
     } catch (error) {
       dispatch(getBarberFailure(error.message));
@@ -40,9 +39,8 @@ export const getAllBarbers = () => {
     dispatch(getBarberRequest());
 
     try {
-      const response = await api.get('/barber-api/get-allBarbers');
-      const barbers = response.data; // Assuming your API returns an array of barbers
-      // console.log(barbers)
+      const response = await api.get('/barbers/');
+      const barbers = response.data; 
       dispatch(getBarberSuccess(barbers));
     } catch (error) {
       dispatch(getBarberFailure(error.message));

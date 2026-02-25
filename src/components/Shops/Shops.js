@@ -4,10 +4,10 @@ import BarberShopDetail from '../BarberShopDetail/BarberShopDetail';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { parseISO } from 'date-fns';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { bookAppointment } from '../../redux/actions/bookingActions';
 import { getAllBarbers } from "../../redux/actions/barberAction";
+import {getShops} from "../../redux/actions/shopAction";
 
 import './Shops.css';
 
@@ -16,6 +16,7 @@ function Shops() {
   const barberData = useSelector((state) => state.barber.barberData);
   const userId = useSelector((state) => state.auth.userId);
   const isLogin = useSelector((state) => state.auth.isLogin);
+  const allShops = useSelector((state)=>state.shop.shops)
   const navigate = useNavigate();
   const [selectedBarberShop, setSelectedBarberShop] = useState(null);
   const [selectedServices, setSelectedServices] = useState();
@@ -26,14 +27,10 @@ function Shops() {
   const [barberShops, setBarberShops] = useState([]);
   const [shopsToDisplay, setShopsToDisplay] = useState([]);
   const [reservedTimes, setReservedTimes] = useState([]);
-  const fullState = useSelector((state) => state);
 
-useEffect(() => {
-  console.log("FULL REDUX STATE:", fullState);
-}, [fullState]);
   useEffect(() => {
     dispatch(getAllBarbers());
-    console.log(barberData)
+    dispatch(getShops());
   }, []);
 
   useEffect(() => {
@@ -43,13 +40,13 @@ useEffect(() => {
   }, [barberData]);
 
   useEffect(() => {
-    if (Array.isArray(barberShops)) setShopsToDisplay(showAllShops ? barberShops : barberShops?.slice(0, Math.min(4, barberShops?.length)));
-  }, [barberShops, showAllShops]);
+    
+    if (Array.isArray(barberShops)) setShopsToDisplay(showAllShops ? allShops : allShops?.slice(0, Math.min(4, allShops?.length)));
+  }, [allShops, showAllShops]);
 
   useEffect(() => {
-    console.log("FINAL barberData:", barberData);
   }, [barberData]);
-  
+
 
   useEffect(() => {
     if (Array.isArray(barberData)) {
@@ -61,7 +58,7 @@ useEffect(() => {
   let generateStarRating = (rating) => {
     const maxRating = 5;
     const starRating = [];
-    const roundedRating = Math.round(rating * 2) / 2; // Round to the nearest half star
+    const roundedRating = Math.round(rating * 2) / 2;
 
     for (let i = 1; i <= maxRating; i++) {
       if (i <= roundedRating) {
@@ -80,6 +77,8 @@ useEffect(() => {
       navigate('/login');
     }
     setSelectedBarberShop(barberShop);
+
+
     setIsModalOpen(true);
   };
 
@@ -121,22 +120,28 @@ useEffect(() => {
   };
 
   const handleBookedSlot = () => {
-    // Calculate the total cost of selected services
-    const totalCost = selectedServices?.reduce((acc, service) => acc + service.price, 0);
-
-    // Check if there is a continuous time slot
-    const isContinuousTime = checkContinuousTime(selectedTime, selectedServices);
-
+    const totalCost = selectedServices?.reduce(
+      (acc, service) => acc + service.price,
+      0
+    );
+  
+    const isContinuousTime = checkContinuousTime(
+      selectedTime,
+      selectedServices
+    );
+  
     if (isContinuousTime) {
-      // Display the total cost
-      console.log(`Total Cost: $${totalCost}`);
-      // Dispatch the booking action
-      dispatch(bookAppointment(userId, selectedBarberShop.barberId, selectedTime, selectedServices));
-      // Close the modal
+      navigate("/payment", {
+        state: {
+          userId,
+          barberId: selectedBarberShop.barberId,
+          selectedTime,
+          selectedServices,
+          totalCost,
+        },
+      });
+  
       handleCloseModal();
-    } else {
-      // If there is no continuous time, you can display an error message or handle it as needed
-      console.log("Selected services require a continuous time slot.");
     }
   };
 
@@ -156,7 +161,7 @@ useEffect(() => {
           <div key={index} className="col">
             <div className="card card-shops">
               <div className="card-body">
-                <h3>{shop.shopName}</h3>
+                <h3>{shop.shop_name}</h3>
                 <NavLink
                   state={{ barberId: shop.barberId }}
                   style={{

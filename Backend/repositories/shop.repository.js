@@ -23,3 +23,11 @@ exports.update = async (id, data) => {
     [data.shop_name, data.address, data.open_time, data.close_time, id]
   );
 };
+
+exports.getAllShops = async () => {
+  const [row] = await db.query(
+    "SELECT * FROM shops",
+  );
+  console.log("all shops repo ",row)
+  return row;
+}

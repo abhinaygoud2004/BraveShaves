@@ -42,16 +42,15 @@ export const login = (credentials) => {
     dispatch(loginRequest());
 
     try {
-      const response = await api.post('/user-api/login', credentials);
-
-      if (response.data.message === "success") {
+      const response = await api.post('/user/login', credentials);
+      if (response.data.message == "success") {
         dispatch(setIsLogin(true));
-        dispatch(loginSuccess(response.data.userId));
+        dispatch(loginSuccess(response.data.user.user.id));
 
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("token", response.data.user.token);
+        localStorage.setItem("userId", response.data.user.user.id);
       } else {
-        dispatch(loginFailure(response.data.message));
+        dispatch(loginFailure(response.message));
       }
 
     } catch (error) {
@@ -81,7 +80,7 @@ export const signup = (userData) => {
     dispatch(signupRequest());
 
     try {
-      const response = await api.post('/user-api/register', userData,{
+      const response = await api.post('/user/register', userData,{
         headers: {
           'Content-Type': 'application/json', // Set the content type to JSON
         },});

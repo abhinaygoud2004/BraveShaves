@@ -45,12 +45,12 @@ function Login() {
                     <h1 className='display-1 lh-lg fw-semibold'>Login</h1>
                                             <form onSubmit={handleLogin}>
                         <div className='input-group mt-3'>
-                            <span className='input-group-text'>Username</span>
+                            <span className='input-group-text'>Email</span>
                             <input
                             onChange={handleInputChange}
                             type="text"
                             className='form-control'
-                            name="username"
+                            name="email"
                             />
                         </div>
 

@@ -30,16 +30,22 @@ export const fetchAppointmentsFailure = (error) => ({
 });
 
 // Async Action Creators
-export const bookAppointment = (userId,barberId, selectedTime,selectedServices) => {
+export const bookAppointment = (bookingData, userId) => {
   return async (dispatch) => {
     dispatch(bookAppointmentRequest());
+
     try {
-      // Perform the booking request to your backend API
-      await api.post(`/appointment-api/book/${userId}`, { barberId, selectedTime ,selectedServices});
+      await api.post(`/appointments/`, bookingData);
+
       dispatch(bookAppointmentSuccess());
-      dispatch(fetchAppointments(userId)); // After booking, fetch updated appointments
+
+      await dispatch(fetchAppointments(userId));
+
+      return true;  // 👈 important
+
     } catch (error) {
       dispatch(bookAppointmentFailure(error.message));
+      return false;
     }
   };
 };
@@ -48,8 +54,7 @@ export const fetchAppointments = (userId) => {
   return async (dispatch) => {
     dispatch(fetchAppointmentsRequest());
     try {
-      const response = await api.get(`/appointment-api/user/${userId}`);
-      console.log("appointment api",response.data)
+      const response = await api.get(`/appointments/user`);
       dispatch(fetchAppointmentsSuccess(response.data));
     } catch (error) {
       dispatch(fetchAppointmentsFailure(error.message));

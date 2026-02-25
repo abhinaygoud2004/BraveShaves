@@ -1,48 +1,119 @@
 const db = require("../config/db");
 const repo = require("../repositories/appointment.repository");
 
-exports.create = async (
-  userId,
-  barberId,
-  services,
-  startTime
-) => {
-  const duration = services.length * 15;
-  const endTime = new Date(new Date(startTime).getTime() + duration * 60000);
+/**
+ * Create Appointment
+ * Controller sends:
+ * {
+ *   user_id,
+ *   barber_id,
+ *   selectedTime,
+ *   selectedServices
+ * }
+ */
+exports.create = async (data) => {
+  const {
+    user_id,
+    selectedTime,
+    selectedServices,
+    payment_status,
+    status
+  } = data;
 
-  const overlap = await repo.overlap(barberId, startTime, endTime);
-  if (overlap) throw new Error("Slot unavailable");
+  if (!user_id) throw new Error("User ID is required");
+  if (!selectedTime) throw new Error("Start time is required");
+
+  if (!selectedServices || selectedServices.length === 0) {
+    throw new Error("At least one service must be selected");
+  }
+
+  // ✅ Derive barber_id from first service
+  const barber_id = selectedServices[0].barber_id;
+
+  if (!barber_id) {
+    throw new Error("Barber ID missing in selected services");
+  }
+
+  // ✅ Calculate total duration
+  const totalDurationMinutes = selectedServices.reduce(
+    (total, service) =>
+      total + Number(service.duration_minutes || 0),
+    0
+  );
+
+  if (totalDurationMinutes <= 0) {
+    throw new Error("Invalid service duration");
+  }
+
+  const startTime = new Date(selectedTime);
+  const endTime = new Date(
+    startTime.getTime() + totalDurationMinutes * 60000
+  );
+
+  const overlap = await repo.overlap(barber_id, startTime, endTime);
+  if (overlap) {
+    throw new Error("Slot unavailable");
+  }
 
   const conn = await db.getConnection();
+
   try {
     await conn.beginTransaction();
 
-    const apptId = await repo.create(
-      { userId, barberId, startTime, endTime },
+    const appointmentId = await repo.create(
+      {
+        user_id,
+        barber_id,
+        start_time: startTime,
+        end_time: endTime,
+        payment_status: payment_status || "PENDING",
+        status: status || "PENDING",
+      },
       conn
     );
 
-    await repo.attachServices(apptId, services, conn);
+    const serviceIds = selectedServices.map(
+      (service) => service.id
+    );
+
+    await repo.attachServices(
+      appointmentId,
+      serviceIds,
+      conn
+    );
 
     await conn.commit();
-    return apptId;
-  } catch (e) {
+
+    return appointmentId;
+
+  } catch (error) {
     await conn.rollback();
-    throw e;
+    throw error;
   } finally {
     conn.release();
   }
 };
 
 
+/**
+ * Get appointments by user
+ */
 exports.getByUser = async (userId) => {
-  return appointmentRepo.findByUser(userId);
+  return repo.findByUser(userId);
 };
 
-exports.getByBarber = async (barberId) => {
-  return appointmentRepo.findByBarber(barberId);
+
+/**
+ * Get appointments by barber
+ */
+exports.getByBarber = async (barber_id) => {
+  return repo.findByBarber(barber_id);
 };
 
+
+/**
+ * Cancel appointment
+ */
 exports.cancel = async (appointmentId) => {
-  await appointmentRepo.cancel(appointmentId);
+  return repo.cancel(appointmentId);
 };

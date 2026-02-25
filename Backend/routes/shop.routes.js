@@ -13,4 +13,5 @@ router.get("/barber/:barberId", shopController.getByBarber);
 // Update shop details
 router.put("/:id", authMiddleware, shopController.update);
 
+router.get("/",shopController.getAllShops)
 module.exports = router;
