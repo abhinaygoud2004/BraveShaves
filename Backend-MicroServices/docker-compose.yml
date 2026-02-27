@@ -1,0 +1,9 @@
+api-gateway:
+  build: ./api-gateway
+  ports:
+    - "5000:5000"
+  depends_on:
+    - user-service
+    - shop-service
+    - appointment-service
+    - payment-service
