@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../redux/actions/userAction";
 import { getUserAppointments } from "../../redux/actions/appointmentActions";
 import { getAllBarbers } from "../../redux/actions/barberAction";
+import { Link } from "react-router-dom";
+
 
 function MyProfile() {
   const dispatch = useDispatch();
@@ -127,9 +129,16 @@ function BookingSection({ title, bookings ,barberMap}) {
         <ul className="list-group mb-4">
           {bookings.map((booking) => (
             <li key={booking.id} className="list-group-item">
-              <h6>
-                Barber: {barberMap[booking.barber_id] || "Unknown Barber"}
-              </h6>
+            <h6>
+              Barber:{" "}
+              {booking.barber_id ? (
+                <Link to={`/barber/${booking.barber_id}`}>
+                  {barberMap[booking.barber_id] || "Unknown Barber"}
+                </Link>
+              ) : (
+                "Unknown Barber"
+              )}
+            </h6>
 
               {/* Services */}
               <h6>Services:</h6>

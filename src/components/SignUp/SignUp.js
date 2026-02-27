@@ -42,7 +42,7 @@ function SignUp() {
                 {errors.email?.type&&<p className='text-danger'>*Email is required</p>}
             </div>
             <div className="form-floating">
-                <input type="text" name="phone" id="phone" placeholder='hi' className='form-control mt-3' {...register("mobileno",{required:true})}/>
+                <input type="text" name="phone" id="phone" placeholder='hi' className='form-control mt-3' {...register("phone",{required:true})}/>
                 <label htmlFor="phone">Mobile number</label>
                 {errors.mobileno?.type&&<p className='text-danger'>*Mobile no is required</p>}
             </div>

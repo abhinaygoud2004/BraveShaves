@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBarberData } from '../../redux/actions/barberAction';
+import { getBarberById } from '../../redux/actions/barberAction';
 
 function DateTimePicker(props) {
   const dispatch = useDispatch();
@@ -10,7 +10,7 @@ function DateTimePicker(props) {
   const [reservedTimes, setReservedTimes] = useState([]);
 
   useEffect(() => {
-    dispatch(getBarberData(props.barberId));
+    dispatch(getBarberById(props.barberId));
   }, [ props.barberId]);
 
   // Update the reserved times when the barberData changes

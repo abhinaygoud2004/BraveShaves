@@ -43,7 +43,7 @@ export const login = (credentials) => {
 
     try {
       const response = await api.post('/user/login', credentials);
-      if (response.data.message == "success") {
+      if (response.data.message === "success") {
         dispatch(setIsLogin(true));
         dispatch(loginSuccess(response.data.user.user.id));
 

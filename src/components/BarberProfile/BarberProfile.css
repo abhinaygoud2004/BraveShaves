@@ -1,0 +1,58 @@
+BarberProfile.css
+
+/* Center the whole profile card vertically and horizontally */
+.container {
+    display: flex;
+    justify-content: center; /* horizontal centering */
+    align-items: center;     /* vertical centering */
+    min-height: 80vh;        /* take most of the viewport height */
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Profile card styling */
+  .profile-card {
+    background-color: #fff; /* white background */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Barber name */
+  .profile-card h2 {
+    margin-bottom: 15px;
+    font-size: 28px;
+    color: #333;
+  }
+  
+  /* General info styling */
+  .profile-card p {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  /* Optional: specialties styling */
+  .profile-card .specialties {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 500px) {
+    .profile-card {
+      padding: 20px;
+    }
+  
+    .profile-card h2 {
+      font-size: 24px;
+    }
+  
+    .profile-card p {
+      font-size: 14px;
+    }
+  }

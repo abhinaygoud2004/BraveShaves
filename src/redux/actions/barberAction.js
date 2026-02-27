@@ -13,20 +13,25 @@ export const getBarberSuccess = (barber) => ({
   payload: barber,
 });
 
+export const getSingleBarberSuccess = (barber) => ({
+  type: BarberTypes.ACTION.GET_SINGLE_BARBER_SUCCESS,
+  payload: barber, // single barber object
+});
+
 export const getBarberFailure = (error) => ({
   type: BarberTypes.ACTION.GET_BARBER_FAILURE,
   payload: error,
 });
 
 // Async action creator to fetch barber data by barberId
-export const getBarberData = (barberId) => {
+export const getBarberById = (barberId) => {
   return async (dispatch) => {
     dispatch(getBarberRequest());
 
     try {
       const response = await api.get(`/barbers/${barberId}`);
       const barber = response.data; // Assuming your API returns barber data
-      dispatch(getBarberSuccess(barber));
+      dispatch(getSingleBarberSuccess(barber));
     } catch (error) {
       dispatch(getBarberFailure(error.message));
     }

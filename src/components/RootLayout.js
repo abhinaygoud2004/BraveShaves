@@ -27,7 +27,7 @@ function RootLayout() {
           element={<PrivateRoute element={<MyProfile />} />}
         />
         <Route
-          path="/barber-profile/:barberName"
+          path="/barber/:barberId"
           element={<PrivateRoute element={<BarberProfile />} />}
         />
         <Route path="/shops" element={<Shops />} />

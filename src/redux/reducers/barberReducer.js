@@ -4,6 +4,7 @@ import { BarberTypes } from "../types";
 
 const initialState = {
   barberData: null,
+  selectedBarber: null,
   loading: false,
   error: null,
 };
@@ -11,19 +12,15 @@ const initialState = {
 const barberReducer = (state = initialState, action) => {
   switch (action.type) {
     case BarberTypes.ACTION.GET_BARBER_REQUEST:
-      return {
-        ...state,
-        loading: true,
-        error: null,
-      };
+    case BarberTypes.ACTION.GET_SINGLE_BARBER_REQUEST:
+      return { ...state, loading: true, error: null };
     case BarberTypes.ACTION.GET_BARBER_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        barberData: action.payload,
-        error: null,
-      };
+      return { ...state, loading: false, barberData: action.payload };
+
+    case BarberTypes.ACTION.GET_SINGLE_BARBER_SUCCESS:
+      return { ...state, loading: false, selectedBarber: action.payload };
     case BarberTypes.ACTION.GET_BARBER_FAILURE:
+    case BarberTypes.ACTION.GET_SINGLE_BARBER_FAILURE:
       return {
         ...state,
         loading: false,
