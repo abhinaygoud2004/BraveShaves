@@ -1,47 +1,27 @@
 const express = require("express");
-const { createProxyMiddleware } = require("http-proxy-middleware");
-const authMiddleware = require("../middlewares/auth.middleware");
-const rateLimiter = require("../middlewares/rateLimiter");
+const { createProxyMiddleware, fixRequestBody } = require("http-proxy-middleware");
 
 const router = express.Router();
 
-// Public routes (no auth)
-router.use(
-  "/users",
+const createProxy = (target, serviceName) =>
   createProxyMiddleware({
-    target: process.env.USER_SERVICE_URL,
+    target,
     changeOrigin: true,
-  })
-);
+    onProxyReq: fixRequestBody,
+    // Use a function to manually reconstruct the path
+    pathRewrite: (path, req) => {
+      // Incoming 'path' here is likely just '/register' or '/health'
+      // We force it to become '/api/users/register' etc.
+      const rewrittenPath = `/api/${serviceName}${path}`;
+      console.log(`[Proxy] Rewriting ${path} -> ${rewrittenPath}`);
+      return rewrittenPath;
+    },
+    logLevel: "debug",
+  });
 
-// Protected routes
-router.use(
-  "/shops",
-  authMiddleware,
-  rateLimiter,
-  createProxyMiddleware({
-    target: process.env.SHOP_SERVICE_URL,
-    changeOrigin: true,
-  })
-);
-
-router.use(
-  "/appointments",
-  authMiddleware,
-  rateLimiter,
-  createProxyMiddleware({
-    target: process.env.APPOINTMENT_SERVICE_URL,
-    changeOrigin: true,
-  })
-);
-
-router.use(
-  "/payments",
-  authMiddleware,
-  createProxyMiddleware({
-    target: process.env.PAYMENT_SERVICE_URL,
-    changeOrigin: true,
-  })
-);
+// Important: Pass the service name (users, shops, appointments)
+router.use("/users", createProxy(process.env.USER_SERVICE_URL, "users"));
+router.use("/shops", createProxy(process.env.SHOP_SERVICE_URL, "shops"));
+router.use("/appointments", createProxy(process.env.APPOINTMENT_SERVICE_URL, "appointments"));
 
 module.exports = router;

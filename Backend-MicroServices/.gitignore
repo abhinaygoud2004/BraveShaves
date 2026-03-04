@@ -1,0 +1,25 @@
+# Node
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/
+build/
+
+# Docker
+docker-data/
+
+# Temporary
+tmp/

@@ -1,4 +1,3 @@
-const { use } = require("../app");
 const service = require("../services/user.service");
 
 
@@ -11,6 +10,9 @@ exports.register = async (req, res, next) => {
   }
 };
 
+exports.health=async(req,res,next)=>{
+  res.send("User Service is alive");
+}
 
 
 exports.login = async (req,res,next) => {
