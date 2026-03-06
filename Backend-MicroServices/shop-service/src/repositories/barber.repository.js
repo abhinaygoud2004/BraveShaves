@@ -9,7 +9,7 @@ exports.create = async ({ user_id, experience_years }) => {
 };
 
 exports.findAll = async () => {
-  const [rows] = await db.query("SELECT b.id,u.name,u.email,u.phone,b.experience_years,b.user_id,b.rating FROM barbers b LEFT JOIN users u on b.user_id=u.id");
+  const [rows] = await db.query("SELECT * from barbers");
   return rows;
 };
 

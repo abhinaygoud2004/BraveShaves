@@ -18,8 +18,8 @@ exports.create = async (data) => {
 };
 
 exports.listByBarber = async (barberId) => {
-  const barber = await barberRepo.findById(barberId);
-  if (!barber) throw new Error("Barber not found");
+  // const barber = await barberRepo.findById(barberId);
+  // if (!barber) throw new Error("Barber not found");
 
   return serviceRepo.findByBarber(barberId);
 };

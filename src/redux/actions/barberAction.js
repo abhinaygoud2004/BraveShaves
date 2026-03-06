@@ -46,6 +46,7 @@ export const getAllBarbers = () => {
     try {
       const response = await api.get('/barbers/');
       const barbers = response.data; 
+      console.log(barbers,"barbers",Array.isArray(barbers))
       dispatch(getBarberSuccess(barbers));
     } catch (error) {
       dispatch(getBarberFailure(error.message));

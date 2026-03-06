@@ -32,6 +32,8 @@ function Shops() {
     dispatch(getAllBarbers());
     dispatch(getShops());
   }, []);
+  
+  console.log(barberData,"in shops.js", Array.isArray(barberData))
 
   useEffect(() => {
     if (barberData && barberData.reservedTimes) {

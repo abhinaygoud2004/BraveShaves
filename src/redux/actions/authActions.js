@@ -42,7 +42,7 @@ export const login = (credentials) => {
     dispatch(loginRequest());
 
     try {
-      const response = await api.post('/user/login', credentials);
+      const response = await api.post('/users/login', credentials);
       if (response.data.message === "success") {
         dispatch(setIsLogin(true));
         dispatch(loginSuccess(response.data.user.user.id));
@@ -80,7 +80,7 @@ export const signup = (userData) => {
     dispatch(signupRequest());
 
     try {
-      const response = await api.post('/user/register', userData,{
+      const response = await api.post('/users/register', userData,{
         headers: {
           'Content-Type': 'application/json', // Set the content type to JSON
         },});

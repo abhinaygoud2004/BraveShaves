@@ -22,7 +22,7 @@ export const getUserData = () => {
     dispatch(getUserRequest());
 
     try {
-      const response = await api.get(`/user/me`);
+      const response = await api.get(`/users/me`);
       const user = response.data; // Assuming your API returns user data
       dispatch(getUserSuccess(user));
     } catch (error) {

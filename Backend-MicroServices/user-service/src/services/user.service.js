@@ -26,8 +26,16 @@ exports.login = async ({ email, password }) => {
   }
 };
 
-exports.user = async (userId) => {
+exports.userById = async (userId) => {
   const user = await repo.findById(userId);
   if (!user) throw new Error("User not found");
   return user;
+};
+
+
+exports.usersByIds = async (ids) => {
+  if (!ids || !ids.length) return [];
+
+  const users = await repo.findByIds(ids);
+  return users;
 };

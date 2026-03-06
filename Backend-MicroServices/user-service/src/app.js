@@ -4,7 +4,9 @@ require("dotenv").config();
 
 const userRoutes = require("./routes/user.routes");
 const errorMiddleware = require("./middlewares/error.middleware");
+const startGrpcServer = require("./gRPC/user.grpc.server");
 
+startGrpcServer();
 const app = express();
 
 app.use(cors());

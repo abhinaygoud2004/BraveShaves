@@ -23,5 +23,7 @@ const createProxy = (target, serviceName) =>
 router.use("/users", createProxy(process.env.USER_SERVICE_URL, "users"));
 router.use("/shops", createProxy(process.env.SHOP_SERVICE_URL, "shops"));
 router.use("/appointments", createProxy(process.env.APPOINTMENT_SERVICE_URL, "appointments"));
+router.use("/barbers", createProxy(process.env.SHOP_SERVICE_URL, "barbers"));
+router.use("/services",createProxy(process.env.SHOP_SERVICE_URL,"services"));
 
 module.exports = router;

@@ -86,8 +86,11 @@ services:
     restart: always
     ports:
       - "5001:5001"
+      - "50051:50051"
     depends_on:
       - mysql-user
+    volumes:
+      - ./shared:/app/shared
     environment:
       PORT: 5001
       DB_HOST: mysql-user
@@ -107,6 +110,8 @@ services:
     depends_on:
       - mysql-shop
       - redis
+    volumes:
+      - ./shared:/app/shared
     environment:
       PORT: 5002
       DB_HOST: mysql-shop

@@ -8,7 +8,8 @@ const {authorizeRoles} = require("../middlewares/auth.middleware");
 router.post("/",authorizeRoles("ADMIN"), barberController.create);
 
 // Get all barbers (for shop listing)
-router.get("/",authorizeRoles("USER","BARBER","ADMIN"), barberController.list);
+// router.get("/",authorizeRoles("USER","BARBER","ADMIN"), barberController.list);
+router.get("/", barberController.list);
 
 // Get barber by id
 router.get("/:id",authorizeRoles("USER","BARBER","ADMIN"), barberController.getById);

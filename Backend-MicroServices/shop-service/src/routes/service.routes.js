@@ -8,7 +8,8 @@ const {authorizeRoles} = require("../middlewares/auth.middleware");
 router.post("/", authorizeRoles("BARBER"), serviceController.create);
 
 // Get services by barber
-router.get("/barber/:barberId", authorizeRoles("USER","BARBER","ADMIN"),serviceController.listByBarber);
+// router.get("/barber/:barberId", authorizeRoles("USER","BARBER","ADMIN"),serviceController.listByBarber);
+router.get("/barber/:barberId",serviceController.listByBarber);
 
 // Update service
 router.put("/:id", authorizeRoles("BARBER"), serviceController.update);
