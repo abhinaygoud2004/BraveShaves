@@ -20,34 +20,29 @@ jobs:
           node-version: 18
 
       - name: Install API Gateway dependencies
-        run: |
-          cd Backend-Microservices/api-gateway
-          npm install
+        run: npm install
+        working-directory: Backend-Microservices/api-gateway
 
       - name: Install User Service dependencies
-        run: |
-          cd Backend-Microservices/user-service
-          npm install
+        run: npm install
+        working-directory: Backend-Microservices/user-service
 
       - name: Install Shop Service dependencies
-        run: |
-          cd Backend-Microservices/shop-service
-          npm install
+        run: npm install
+        working-directory: Backend-Microservices/shop-service
 
       - name: Install Appointment Service dependencies
-        run: |
-          cd Backend-Microservices/appointment-service
-          npm install
+        run: npm install
+        working-directory: Backend-Microservices/appointment-service
 
       - name: Install Payment Service dependencies
-        run: |
-          cd Backend-Microservices/payment-service
-          npm install
+        run: npm install
+        working-directory: Backend-Microservices/payment-service
 
       - name: Install Notification Service dependencies
-        run: |
-          cd Backend-Microservices/notification-service
-          npm install
+        run: npm install
+        working-directory: Backend-Microservices/notification-service
 
       - name: Build Docker containers
         run: docker compose build
+        working-directory: Backend-Microservices
