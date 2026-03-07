@@ -1,0 +1,30 @@
+name: Microservices CI Pipeline
+
+on:
+  push:
+    branches: [ microservices ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          cd api-gateway && npm install
+          cd ../user-service && npm install
+          cd ../shop-service && npm install
+          cd ../appointment-service && npm install
+          cd ../payment-service && npm install
+          cd ../notification-service && npm install
+
+      - name: Build Docker containers
+        run: docker compose build
