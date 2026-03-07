@@ -7,26 +7,49 @@ on:
       - microservices
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install dependencies
+      # Install dependencies for each service
+
+      - name: Install API Gateway dependencies
         run: |
-          cd api-gateway && npm install
-          cd ../user-service && npm install
-          cd ../shop-service && npm install
-          cd ../appointment-service && npm install
-          cd ../payment-service && npm install
-          cd ../notification-service && npm install
+          cd api-gateway
+          npm install
+
+      - name: Install User Service dependencies
+        run: |
+          cd Backend-Microservices/user-service
+          npm install
+
+      - name: Install Shop Service dependencies
+        run: |
+          cd Backend-Microservices/shop-service
+          npm install
+
+      - name: Install Appointment Service dependencies
+        run: |
+          cd Backend-Microservices/appointment-service
+          npm install
+
+      - name: Install Payment Service dependencies
+        run: |
+          cd Backend-Microservices/payment-service
+          npm install
+
+      - name: Install Notification Service dependencies
+        run: |
+          cd Backend-Microservices/notification-service
+          npm install
 
       - name: Build Docker containers
         run: docker compose build
