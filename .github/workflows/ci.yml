@@ -21,28 +21,28 @@ jobs:
 
       - name: Install API Gateway dependencies
         run: npm install
-        working-directory: Backend-Microservices/api-gateway
+        working-directory: Backend-MicroServices/api-gateway
 
       - name: Install User Service dependencies
         run: npm install
-        working-directory: Backend-Microservices/user-service
+        working-directory: Backend-MicroServices/user-service
 
       - name: Install Shop Service dependencies
         run: npm install
-        working-directory: Backend-Microservices/shop-service
+        working-directory: Backend-MicroServices/shop-service
 
       - name: Install Appointment Service dependencies
         run: npm install
-        working-directory: Backend-Microservices/appointment-service
+        working-directory: Backend-MicroServices/appointment-service
 
       - name: Install Payment Service dependencies
         run: npm install
-        working-directory: Backend-Microservices/payment-service
+        working-directory: Backend-MicroServices/payment-service
 
       - name: Install Notification Service dependencies
         run: npm install
-        working-directory: Backend-Microservices/notification-service
+        working-directory: Backend-MicroServices/notification-service
 
       - name: Build Docker containers
         run: docker compose build
-        working-directory: Backend-Microservices
+        working-directory: Backend-MicroServices
