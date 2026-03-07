@@ -19,11 +19,9 @@ jobs:
         with:
           node-version: 18
 
-      # Install dependencies for each service
-
       - name: Install API Gateway dependencies
         run: |
-          cd api-gateway
+          cd Backend-Microservices/api-gateway
           npm install
 
       - name: Install User Service dependencies
