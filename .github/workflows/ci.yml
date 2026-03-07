@@ -1,4 +1,4 @@
-name: Microservices CI Pipeline
+name: Microservices CI/CD Pipeline
 
 on:
   push:
@@ -7,10 +7,12 @@ on:
       - microservices
 
 jobs:
-  build:
+  build-and-push:
+
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -19,6 +21,7 @@ jobs:
         with:
           node-version: 18
 
+      # Install dependencies
       - name: Install API Gateway dependencies
         run: npm install
         working-directory: Backend-MicroServices/api-gateway
@@ -43,6 +46,29 @@ jobs:
         run: npm install
         working-directory: Backend-MicroServices/notification-service
 
-      - name: Build Docker containers
-        run: docker compose build
-        working-directory: Backend-MicroServices
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Docker Images
+      - name: Build Docker Images
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest ./Backend-MicroServices/api-gateway
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest ./Backend-MicroServices/user-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/shop-service:latest ./Backend-MicroServices/shop-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/appointment-service:latest ./Backend-MicroServices/appointment-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/payment-service:latest ./Backend-MicroServices/payment-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:latest ./Backend-MicroServices/notification-service
+
+      # Push Images to Docker Hub
+      - name: Push Docker Images
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/shop-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/appointment-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/payment-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
