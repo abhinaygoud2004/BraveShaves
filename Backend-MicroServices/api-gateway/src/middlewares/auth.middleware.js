@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
+exports.authenticateUser=(req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader)
@@ -11,9 +11,10 @@ module.exports = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
+    console.log("decoded user",decoded)
     // Attach user info for downstream services
-    req.headers["x-user-id"] = decoded.id;
-    req.headers["x-user-role"] = decoded.role;
+    req.headers["user_id"] = decoded.id;
+    req.headers["user_role"] = decoded.role;
 
     next();
   } catch (err) {

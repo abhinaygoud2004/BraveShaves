@@ -131,6 +131,8 @@ services:
     depends_on:
       - mysql-appointment
       - rabbitmq
+    volumes:
+      - ./shared:/app/shared
     environment:
       PORT: 5003
       DB_HOST: mysql-appointment

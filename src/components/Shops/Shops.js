@@ -123,9 +123,11 @@ function Shops() {
 
   const handleBookedSlot = () => {
     const totalCost = selectedServices?.reduce(
-      (acc, service) => acc + service.price,
+      (acc, service) => acc + Number(service.price || 0),
       0
     );
+
+    console.log(selectedServices,totalCost)
   
     const isContinuousTime = checkContinuousTime(
       selectedTime,

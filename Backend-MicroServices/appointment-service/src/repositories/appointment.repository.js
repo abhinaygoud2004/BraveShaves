@@ -44,10 +44,9 @@ exports.attachServices = async (appointmentId, services, conn) => {
 exports.findByUser = async (userId) => {
   const [rows] = await db.query(
     `
-    SELECT a.*, s.id as service_id, s.name as service_name
+    SELECT a.*, aps.service_id
     FROM appointments a
     LEFT JOIN appointment_services aps ON a.id = aps.appointment_id
-    LEFT JOIN services s ON aps.service_id = s.id
     WHERE a.user_id = ?
     ORDER BY a.start_time DESC
     `,

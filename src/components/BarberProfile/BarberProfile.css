@@ -1,58 +1,85 @@
-BarberProfile.css
+/* Background */
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa, #eef2f7);
+}
 
-/* Center the whole profile card vertically and horizontally */
-.container {
-    display: flex;
-    justify-content: center; /* horizontal centering */
-    align-items: center;     /* vertical centering */
-    min-height: 80vh;        /* take most of the viewport height */
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  /* Profile card styling */
+/* Profile Card */
+.profile-card {
+  background: #fff;
+  padding: 35px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Avatar */
+.avatar {
+  width: 80px;
+  height: 80px;
+  margin: auto;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+/* Name */
+.profile-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Info section */
+.info {
+  text-align: left;
+}
+
+.info p {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+  font-size: 15px;
+}
+
+.info span {
+  font-weight: 600;
+  color: #444;
+}
+
+/* Loading text */
+.loading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 18px;
+}
+
+/* Mobile */
+@media (max-width: 500px) {
   .profile-card {
-    background-color: #fff; /* white background */
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    max-width: 450px;
-    width: 100%;
-    text-align: center;
+    padding: 25px;
   }
-  
-  /* Barber name */
-  .profile-card h2 {
-    margin-bottom: 15px;
+
+  .avatar {
+    width: 70px;
+    height: 70px;
     font-size: 28px;
-    color: #333;
   }
-  
-  /* General info styling */
-  .profile-card p {
-    margin: 8px 0;
-    font-size: 16px;
-    color: #555;
-  }
-  
-  /* Optional: specialties styling */
-  .profile-card .specialties {
-    margin-top: 10px;
-    font-style: italic;
-    color: #666;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 500px) {
-    .profile-card {
-      padding: 20px;
-    }
-  
-    .profile-card h2 {
-      font-size: 24px;
-    }
-  
-    .profile-card p {
-      font-size: 14px;
-    }
-  }
+}

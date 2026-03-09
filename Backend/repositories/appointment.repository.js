@@ -53,7 +53,6 @@ exports.findByUser = async (userId) => {
     `,
     [userId]
   );
-
   return rows;
 };
 

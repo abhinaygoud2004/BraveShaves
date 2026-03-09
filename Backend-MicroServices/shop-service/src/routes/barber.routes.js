@@ -12,6 +12,7 @@ router.post("/",authorizeRoles("ADMIN"), barberController.create);
 router.get("/", barberController.list);
 
 // Get barber by id
-router.get("/:id",authorizeRoles("USER","BARBER","ADMIN"), barberController.getById);
+// router.get("/:id",authorizeRoles("USER","BARBER","ADMIN"), barberController.getById);
+router.get("/:id", barberController.getById);
 
 module.exports = router;

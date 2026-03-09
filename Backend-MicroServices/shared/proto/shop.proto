@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package shop;
+
+service ShopService {
+  rpc GetServicesByIds (ServiceIdsRequest) returns (ServicesResponse);
+}
+
+message ServiceIdsRequest {
+  repeated int32 ids = 1;
+}
+
+message Service {
+  int32 id = 1;
+  string name = 2;
+  int32 barber_id = 3;
+  int32 duration_minutes = 4;
+  double price = 5;
+}
+
+message ServicesResponse {
+  repeated Service services = 1;
+}

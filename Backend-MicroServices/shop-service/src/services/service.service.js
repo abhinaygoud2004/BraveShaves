@@ -32,3 +32,11 @@ exports.update = async (id, data) => {
 exports.remove = async (id) => {
   await serviceRepo.remove(id);
 };
+
+
+exports.getServicesByIds = async (ids) => {
+
+  if (!ids || ids.length === 0) return [];
+
+  return serviceRepo.findByIds(ids);
+};

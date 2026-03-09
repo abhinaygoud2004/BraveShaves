@@ -2,17 +2,31 @@ const db = require("../config/db");
 const publisher = require("../events/publisher");
 const repo = require("../repositories/appointment.repository");
 
-/**
- * Create Appointment
- * Controller sends:
- * {
- *   user_id,
- *   barber_id,
- *   selectedTime,
- *   selectedServices
- * }
- */
-exports.create = async (data, userId) => {
+
+
+const shopClient = require("../gRPC/appointment-services.grpc.client")
+
+const getServicesByIds = (ids) => {
+
+  return new Promise((resolve, reject) => {
+
+    shopClient.GetServicesByIds(
+      { ids },
+      (err, response) => {
+
+        if (err) {
+          return reject(err);
+        }
+
+        resolve(response.services);
+      }
+    );
+
+  });
+
+};
+
+exports.create = async (userId, data) => {
 
   if (!userId) throw new Error("Unauthorized");
 
@@ -65,12 +79,12 @@ exports.create = async (data, userId) => {
         start_time: startTime,
         end_time: endTime,
         payment_status: "PENDING",
-        status: "BOOKED",
+        status: "CONFIRMED",
       },
       conn
     );
 
-    const serviceIds = selectedServices.map(s => s.id);
+    const serviceIds = selectedServices.map(s => s?.id);
 
     await repo.attachServices(
       appointmentId,
@@ -104,7 +118,28 @@ exports.create = async (data, userId) => {
  * Get appointments by user
  */
 exports.getByUser = async (userId) => {
-  return repo.findByUser(userId);
+
+  const rows = await repo.findByUser(userId);
+
+  console.log("in get by user: ",rows[0].service_id)
+
+  if (!rows.length) return [];
+
+  // collect service IDs
+  const serviceIds = [...new Set(rows.map(r => r.service_id))];
+
+  // 🔥 call shop service via gRPC
+  const services = await getServicesByIds(serviceIds);
+
+  const serviceMap = {};
+  services.forEach(s => serviceMap[s.id] = s);
+
+  // attach services
+  return rows.map(r => ({
+    ...r,
+    service: serviceMap[r.service_id]
+  }));
+
 };
 
 

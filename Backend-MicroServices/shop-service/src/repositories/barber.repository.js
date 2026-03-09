@@ -15,7 +15,7 @@ exports.findAll = async () => {
 
 exports.findById = async (id) => {
   const [[row]] = await db.query(
-    "SELECT * FROM barbers b LEFT JOIN users u on b.user_id=u.id WHERE b.id=?",
+    "SELECT * FROM barbers b WHERE b.id=?",
     [id]
   );
   console.log("in repo ",row)

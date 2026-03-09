@@ -1,5 +1,6 @@
 const express = require("express");
 const { createProxyMiddleware, fixRequestBody } = require("http-proxy-middleware");
+const {authenticateUser} = require("../middlewares/auth.middleware")
 
 const router = express.Router();
 
@@ -21,9 +22,9 @@ const createProxy = (target, serviceName) =>
 
 // Important: Pass the service name (users, shops, appointments)
 router.use("/users", createProxy(process.env.USER_SERVICE_URL, "users"));
-router.use("/shops", createProxy(process.env.SHOP_SERVICE_URL, "shops"));
-router.use("/appointments", createProxy(process.env.APPOINTMENT_SERVICE_URL, "appointments"));
-router.use("/barbers", createProxy(process.env.SHOP_SERVICE_URL, "barbers"));
-router.use("/services",createProxy(process.env.SHOP_SERVICE_URL,"services"));
+router.use("/shops", authenticateUser, createProxy(process.env.SHOP_SERVICE_URL, "shops"));
+router.use("/appointments", authenticateUser, createProxy(process.env.APPOINTMENT_SERVICE_URL, "appointments"));
+router.use("/barbers", authenticateUser, createProxy(process.env.SHOP_SERVICE_URL, "barbers"));
+router.use("/services",authenticateUser, createProxy(process.env.SHOP_SERVICE_URL,"services"));
 
 module.exports = router;

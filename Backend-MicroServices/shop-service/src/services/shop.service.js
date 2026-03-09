@@ -43,3 +43,4 @@ exports.getAllShops = async () => {
 
   return shops;
 };
+

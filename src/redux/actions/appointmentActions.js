@@ -44,6 +44,7 @@ export const getUserAppointments = () => async (dispatch, getState) => {
       `/appointments/user`,
     );
 
+    console.log("response in get user appointments ",response.data)
     dispatch({
       type: AppointmentTypes.ACTION.GET_USER_APPOINTMENTS_SUCCESS,
       payload: response.data,

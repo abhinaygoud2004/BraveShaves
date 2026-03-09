@@ -26,3 +26,15 @@ exports.update = async (id, data) => {
 exports.remove = async (id) => {
   await db.query("DELETE FROM services WHERE id=?", [id]);
 };
+
+
+exports.findByIds = async (ids) => {
+  const [rows] = await db.query(
+    `SELECT id,name,barber_id,price,duration_minutes
+     FROM services
+     WHERE id IN (?)`,
+    [ids]
+  );
+
+  return rows;
+};

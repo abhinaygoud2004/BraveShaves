@@ -2,11 +2,17 @@ const appointmentService = require("../services/appointment.service");
 
 exports.create = async (req, res, next) => {
   try {
-    console.log("services: ",req.body)
-    const appointmentId = await appointmentService.create({
-      user_id: req.user.id,
-      ...req.body,
-    });
+    const userId = req.headers["user_id"];
+
+    console.log("services:", req.body);
+    console.log("user", userId);
+
+    const { selectedTime, selectedServices, payment_status, status } = req.body;
+
+    const appointmentId = await appointmentService.create(
+      userId,
+      req.body
+    );
     res.status(201).json({ appointmentId });
   } catch (err) {
     next(err);
@@ -15,7 +21,7 @@ exports.create = async (req, res, next) => {
 
 exports.userAppointments = async (req, res, next) => {
   try {
-    const data = await appointmentService.getByUser(req.user.id);
+    const data = await appointmentService.getByUser(req.headers["user_id"]);
     res.json(data);
   } catch (err) {
     next(err);

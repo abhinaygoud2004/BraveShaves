@@ -47,6 +47,8 @@ function MyProfile() {
 
   // 🔹 Categorize Bookings
   useEffect(() => {
+    console.log("appointments in profile",appointmentState.appointments)
+
     const now = new Date();
 
     const upcoming = [];
