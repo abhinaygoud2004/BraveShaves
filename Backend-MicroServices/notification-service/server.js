@@ -1,11 +1,13 @@
 const { connectRabbitMQ } = require("./src/config/rabbitmq");
-const { consumeAppointmentCreated } = require("./src/consumers/appointment.consumer");
+const startNotificationConsumer = require("./src/consumers/notification.consumer");
 
-const start = async () => {
+async function startServer() {
+
   await connectRabbitMQ();
-  await consumeAppointmentCreated();
 
-  console.log("Notification Service running...");
-};
+  await startNotificationConsumer();
 
-start();
+  console.log("Notification service running");
+}
+
+startServer();

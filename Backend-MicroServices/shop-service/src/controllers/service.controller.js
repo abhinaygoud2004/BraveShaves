@@ -12,7 +12,6 @@ exports.create = async (req, res, next) => {
 exports.listByBarber = async (req, res, next) => {
   try {
     const services = await serviceService.listByBarber(req.params.barberId);
-    console.log("services in controller",services);
     res.json(services);
   } catch (err) {
     next(err);

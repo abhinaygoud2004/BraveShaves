@@ -30,7 +30,8 @@ exports.create = async (userId, data) => {
 
   if (!userId) throw new Error("Unauthorized");
 
-  const { selectedTime, selectedServices } = data;
+  const { email,selectedTime, selectedServices } = data;
+  console.log("email in appoitnemt create",data)
 
   if (!selectedTime) throw new Error("Start time is required");
 
@@ -98,9 +99,11 @@ exports.create = async (userId, data) => {
     await publisher.publishAppointmentCreated({
       appointmentId,
       userId,
+      email,
       barber_id,
       startTime,
-      endTime
+      endTime,
+      serviceIds
     });
 
     return appointmentId;

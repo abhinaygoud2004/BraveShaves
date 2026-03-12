@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { bookAppointment } from '../../redux/actions/bookingActions';
+import { getUserData } from '../../redux/actions/userAction';
 import { getAllBarbers } from "../../redux/actions/barberAction";
 import {getShops} from "../../redux/actions/shopAction";
 
@@ -15,6 +16,7 @@ function Shops() {
   const dispatch = useDispatch();
   const barberData = useSelector((state) => state.barber.barberData);
   const userId = useSelector((state) => state.auth.userId);
+  const email = useSelector((state)=>state.user?.userData?.email)
   const isLogin = useSelector((state) => state.auth.isLogin);
   const allShops = useSelector((state)=>state.shop.shops)
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ function Shops() {
   useEffect(() => {
     dispatch(getAllBarbers());
     dispatch(getShops());
+    dispatch(getUserData());
   }, []);
   
   console.log(barberData,"in shops.js", Array.isArray(barberData))
@@ -138,6 +141,7 @@ function Shops() {
       navigate("/payment", {
         state: {
           userId,
+          email,
           barberId: selectedBarberShop.barberId,
           selectedTime,
           selectedServices,

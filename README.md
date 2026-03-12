@@ -98,7 +98,7 @@ brave-shaves/
 │   │
 │   ├── user-service/
 │   │
-│   └── short-service/
+│   └── shop-service/
 │        ├── barber-service/
 │        ├── service-service/
 │        └── shop-service/

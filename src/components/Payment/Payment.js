@@ -13,6 +13,7 @@ function Payment() {
 
   const {
     userId,
+    email,
     barberId,
     selectedTime,
     selectedServices,
@@ -24,6 +25,7 @@ function Payment() {
     setErrorMessage("");
 
     const bookingData = {
+      email,
       selectedTime,
       selectedServices,
       payment_status: "PAID",
