@@ -2,63 +2,32 @@ version: "3.8"
 
 services:
 
-  # ================= MYSQL USER =================
-  mysql-user:
+  # ================= MYSQL (MERGED) =================
+  mysql:
     image: mysql:8
-    container_name: mysql-user
+    container_name: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Abhinay@123
-      MYSQL_DATABASE: userdb
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
-      - mysql_user_data:/var/lib/mysql
-      - ./database-init/user.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+      - ./database-init/sql-init:/docker-entrypoint-initdb.d
 
-  # ================= MYSQL SHOP =================
-  mysql-shop:
-    image: mysql:8
-    container_name: mysql-shop
+  # ================= MONGODB =================
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: Abhinay@123
-      MYSQL_DATABASE: shopdb
     ports:
-      - "3308:3306"
-    volumes:
-      - mysql_shop_data:/var/lib/mysql
-      - ./database-init/shop.sql:/docker-entrypoint-initdb.d/init.sql
-
-  # ================= MYSQL APPOINTMENT =================
-  mysql-appointment:
-    image: mysql:8
-    container_name: mysql-appointment
-    restart: always
+      - "27017:27017"
     environment:
-      MYSQL_ROOT_PASSWORD: Abhinay@123
-      MYSQL_DATABASE: appointmentdb
-    ports:
-      - "3309:3306"
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - mysql_appointment_data:/var/lib/mysql
-      - ./database-init/appointment.sql:/docker-entrypoint-initdb.d/init.sql
-
-
-  # ================= MYSQL PAYMENT =================
-  mysql-payment:
-    image: mysql:8
-    container_name: mysql-payment
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: Abhinay@123
-      MYSQL_DATABASE: paymentdb
-    ports:
-      - "3310:3306"
-    volumes:
-      - mysql_payment_data:/var/lib/mysql
-      - ./database-init/payment.sql:/docker-entrypoint-initdb.d/init.sql
-
+      - mongo_data:/data/db
+      - ./database-init/mongo-init:/docker-entrypoint-initdb.d
 
   # ================= REDIS =================
   redis:
@@ -67,7 +36,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-
 
   # ================= RABBITMQ =================
   rabbitmq:
@@ -78,7 +46,6 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-
   # ================= USER SERVICE =================
   user-service:
     build: ./user-service
@@ -86,19 +53,14 @@ services:
     restart: always
     ports:
       - "5001:5001"
-      - "50051:50051"
     depends_on:
-      - mysql-user
+      - mongodb
     volumes:
       - ./shared:/app/shared
     environment:
       PORT: 5001
-      DB_HOST: mysql-user
-      DB_USER: root
-      DB_PASSWORD: Abhinay@123
-      DB_NAME: userdb
+      MONGO_URI: mongodb://admin:password@mongodb:27017/userdb?authSource=admin
       JWT_SECRET: supersecretkey
-
 
   # ================= SHOP SERVICE =================
   shop-service:
@@ -108,19 +70,15 @@ services:
     ports:
       - "5002:5002"
     depends_on:
-      - mysql-shop
+      - mongodb
       - redis
       - rabbitmq
     volumes:
       - ./shared:/app/shared
     environment:
       PORT: 5002
-      DB_HOST: mysql-shop
-      DB_USER: root
-      DB_PASSWORD: Abhinay@123
-      DB_NAME: shopdb
+      MONGO_URI: mongodb://admin:password@mongodb:27017/shopdb?authSource=admin
       REDIS_URL: redis://redis:6379
-
 
   # ================= APPOINTMENT SERVICE =================
   appointment-service:
@@ -130,18 +88,17 @@ services:
     ports:
       - "5003:5003"
     depends_on:
-      - mysql-appointment
+      - mysql
       - rabbitmq
     volumes:
       - ./shared:/app/shared
     environment:
       PORT: 5003
-      DB_HOST: mysql-appointment
+      DB_HOST: mysql
       DB_USER: root
       DB_PASSWORD: Abhinay@123
       DB_NAME: appointmentdb
       RABBITMQ_URL: amqp://rabbitmq
-
 
   # ================= PAYMENT SERVICE =================
   payment-service:
@@ -149,28 +106,26 @@ services:
     container_name: payment-service
     restart: always
     depends_on:
-      - mysql-payment
+      - mysql
       - rabbitmq
     environment:
-      DB_HOST: mysql-payment
+      DB_HOST: mysql
       DB_USER: root
       DB_PASSWORD: Abhinay@123
       DB_NAME: paymentdb
       RABBITMQ_URL: amqp://rabbitmq
 
-
   # ================= NOTIFICATION SERVICE =================
   notification-service:
     build: ./notification-service
-    env_file:
-    - ./notification-service/.env
     container_name: notification-service
     restart: always
+    env_file:
+      - ./notification-service/.env
     depends_on:
       - rabbitmq
     environment:
       RABBITMQ_URL: amqp://rabbitmq
-
 
   # ================= API GATEWAY =================
   api-gateway:
@@ -191,9 +146,6 @@ services:
       APPOINTMENT_SERVICE_URL: http://appointment-service:5003
       PAYMENT_SERVICE_URL: http://payment-service:5004
 
-
 volumes:
-  mysql_user_data:
-  mysql_shop_data:
-  mysql_appointment_data:
-  mysql_payment_data:
+  mysql_data:
+  mongo_data:
