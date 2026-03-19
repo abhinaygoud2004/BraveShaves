@@ -1,40 +1,97 @@
-const db = require("../config/db");
+const { getDB } = require("../config/db");
+const { ObjectId } = require("mongodb");
 
+const COLLECTION = "shops";
+
+// CREATE SERVICE (push into services array)
 exports.create = async ({ barber_id, name, price, duration_minutes }) => {
-  const [r] = await db.query(
-    "INSERT INTO services (barber_id,name,price,duration_minutes) VALUES (?,?,?,?)",
-    [barber_id, name, price, duration_minutes]
+  const db = getDB();
+
+  const serviceId = new ObjectId().toString();
+
+  await db.collection(COLLECTION).updateOne(
+    { "barber.userId": barber_id },
+    {
+      $push: {
+        services: {
+          serviceId,
+          name,
+          price,
+          duration_minutes
+        }
+      }
+    }
   );
-  return { id: r.insertId };
+
+  return { id: serviceId };
 };
 
+// FIND SERVICES BY BARBER
 exports.findByBarber = async (barberId) => {
-  const [rows] = await db.query(
-    "SELECT * FROM services WHERE barber_id=?",
-    [barberId]
-  );
-  return rows;
+  const db = getDB();
+
+  const shop = await db.collection(COLLECTION).findOne({
+    "barber.userId": barberId
+  });
+
+  return shop ? shop.services : [];
 };
 
+// UPDATE SERVICE
 exports.update = async (id, data) => {
-  await db.query(
-    "UPDATE services SET name=?, price=?, duration_minutes=? WHERE id=?",
-    [data.name, data.price, data.duration_minutes, id]
+  const db = getDB();
+
+  await db.collection(COLLECTION).updateOne(
+    { "services.serviceId": id },
+    {
+      $set: {
+        "services.$.name": data.name,
+        "services.$.price": data.price,
+        "services.$.duration_minutes": data.duration_minutes
+      }
+    }
   );
 };
 
+// REMOVE SERVICE
 exports.remove = async (id) => {
-  await db.query("DELETE FROM services WHERE id=?", [id]);
+  const db = getDB();
+
+  await db.collection(COLLECTION).updateOne(
+    {},
+    {
+      $pull: {
+        services: { serviceId: id }
+      }
+    }
+  );
 };
 
-
+// FIND SERVICES BY IDS
 exports.findByIds = async (ids) => {
-  const [rows] = await db.query(
-    `SELECT id,name,barber_id,price,duration_minutes
-     FROM services
-     WHERE id IN (?)`,
-    [ids]
-  );
+  const db = getDB();
 
-  return rows;
+  const shops = await db.collection(COLLECTION)
+    .find({
+      "services.serviceId": { $in: ids }
+    })
+    .toArray();
+
+  const services = [];
+
+  shops.forEach(shop => {
+    shop.services.forEach(s => {
+      if (ids.includes(s.serviceId)) {
+        services.push({
+          id: s.serviceId,
+          name: s.name,
+          barber_id: shop.barber.userId,
+          price: s.price,
+          duration_minutes: s.duration_minutes
+        });
+      }
+    });
+  });
+
+  return services;
 };

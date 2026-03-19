@@ -17,11 +17,11 @@ exports.login = async ({ email, password }) => {
   const user = await repo.findByEmail(email);
   if (!user) throw new Error("Invalid email");
 
-  const isValid = await comparePassword(password, user.password_hash);
+  const isValid = await comparePassword(password, user.passwordHash);
   if (!isValid) throw new Error("Invalid password");
 
   return{
-    token:signToken({id:user.id,role:user.role}),
+    token:signToken({id:user._id,role:user.role}),
     user
   }
 };

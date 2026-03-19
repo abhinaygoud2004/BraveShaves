@@ -45,10 +45,11 @@ export const login = (credentials) => {
       const response = await api.post('/users/login', credentials);
       if (response.data.message === "success") {
         dispatch(setIsLogin(true));
-        dispatch(loginSuccess(response.data.user.user.id));
+        console.log("user id ",response.data.user.user)
+        dispatch(loginSuccess(response.data.user.user._id));
 
         localStorage.setItem("token", response.data.user.token);
-        localStorage.setItem("userId", response.data.user.user.id);
+        localStorage.setItem("userId", response.data.user.user._id);
       } else {
         dispatch(loginFailure(response.message));
       }

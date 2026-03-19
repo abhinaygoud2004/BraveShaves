@@ -20,6 +20,7 @@
     "http-proxy-middleware": "^3.0.5",
     "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
     "mysql2": "^3.18.2"
   }
 }

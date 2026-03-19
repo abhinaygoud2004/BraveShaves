@@ -11,11 +11,12 @@ exports.authenticateUser = (req, res, next) => {
 
   try {
     const decoded = jwtUtil.verifyToken(token);
+    
 
     // 🔐 Attach user info to request
     req.user = decoded;
 
-    // console.log("🔐 JWT decoded:", decoded);
+    console.log("🔐 JWT decoded:", decoded);
 
     next();
   } catch (err) {

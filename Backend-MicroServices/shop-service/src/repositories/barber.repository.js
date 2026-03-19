@@ -1,23 +1,37 @@
-const db = require("../config/db");
+const {getDB} = require("../config/db");
 
+const COLLECTION="barbers";
 exports.create = async ({ user_id, experience_years }) => {
-  const [r] = await db.query(
-    "INSERT INTO barbers (user_id,experience_years) VALUES (?,?)",
-    [user_id, experience_years]
-  );
-  return { id: r.insertId, user_id, experience_years };
+  const db = getDB();
+
+  const result = await db.collection(COLLECTION).insertOne({
+    user_id,
+    experience_years,
+    rating: 0,
+    created_at: new Date()
+  });
+
+  return {
+    id: result.insertedId,
+    user_id,
+    experience_years
+  };
 };
 
 exports.findAll = async () => {
-  const [rows] = await db.query("SELECT * from barbers");
-  return rows;
+  const db = getDB();
+
+  return db.collection(COLLECTION).find({}).toArray();
 };
 
 exports.findById = async (id) => {
-  const [[row]] = await db.query(
-    "SELECT * FROM barbers b WHERE b.id=?",
-    [id]
-  );
-  console.log("in repo ",row)
+  const db = getDB();
+  const { ObjectId } = require("mongodb");
+
+  const row = await db.collection(COLLECTION).findOne({
+    _id: new ObjectId(id)
+  });
+
+  console.log("in repo ", row);
   return row;
 };

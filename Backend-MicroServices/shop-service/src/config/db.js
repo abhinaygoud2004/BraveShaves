@@ -1,11 +1,28 @@
-const mysql = require("mysql2/promise");
+const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-})
+let db;
 
-module.exports = pool;
+const connectDB = async () => {
+  try {
+    const client = new MongoClient(process.env.MONGO_URI);
+
+    await client.connect();
+
+    db = client.db(); 
+
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  }
+};
+
+const getDB = () => {
+  if (!db) {
+    throw new Error("DB not initialized. Call connectDB first.");
+  }
+  return db;
+};
+
+module.exports = { connectDB, getDB };

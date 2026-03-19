@@ -32,7 +32,7 @@ function MyProfile() {
   const [missedBookings, setMissedBookings] = useState([]);
 
   const userId = useSelector(
-    (state) => Number(state.auth?.userId)
+    (state) => String(state.auth?.userId)
   );
  
   // 🔹 Fetch Data

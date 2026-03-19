@@ -1,34 +1,58 @@
-const db  = require("../config/db");
+const { getDB } = require("../config/db");
+const { ObjectId } = require("mongodb");
 
-exports.create=async(user)=>{
-  const [res]=await db.query(
-    "INSERT INTO users (name,email,phone,password_hash,role) VALUES (?,?,?,?,?)",
-    [user.name,user.email,user.phone,user.password,user.role]
-  );
-  return {res};
+const COLLECTION = "users";
+
+// ================= CREATE USER =================
+exports.create = async (user) => {
+  const db = getDB();
+
+  const result = await db.collection(COLLECTION).insertOne({
+    name: user.name,
+    email: user.email,
+    phone: user.phone || null,
+    passwordHash: user.password, // already hashed before calling
+    role: user.role || "user",
+    createdAt: new Date()
+  });
+  console.log("registered,",result)
+  return { id: result.insertedId };
 };
 
-exports.findByEmail=async(email)=>{
-  const [[row]]=await db.query(
-    "SELECT * FROM users where email=?",
-    [email]
-  );
-  return row;
+
+// ================= FIND BY EMAIL =================
+exports.findByEmail = async (email) => {
+  const db = getDB();
+
+  return db.collection(COLLECTION).findOne({ email });
 };
 
+
+// ================= FIND BY ID =================
 exports.findById = async (id) => {
-  const [[row]] = await db.query(
-    "SELECT * FROM users WHERE id=?",
-    [id]
-  );
-  return row;
+  const db = getDB();
+
+  return db.collection(COLLECTION).findOne({
+    _id: new ObjectId(id)
+  });
 };
 
-exports.findByIds = async (ids) => {
-  const [rows] = await db.query(
-    `SELECT id,name,email,phone,role FROM users WHERE id IN (?)`,
-    [ids]
-  );
 
-  return rows;
+// ================= FIND BY IDS =================
+exports.findByIds = async (ids) => {
+  const db = getDB();
+
+  const objectIds = ids.map(id => new ObjectId(id));
+
+  return db.collection(COLLECTION)
+    .find({
+      _id: { $in: objectIds }
+    })
+    .project({
+      name: 1,
+      email: 1,
+      phone: 1,
+      role: 1
+    })
+    .toArray();
 };
